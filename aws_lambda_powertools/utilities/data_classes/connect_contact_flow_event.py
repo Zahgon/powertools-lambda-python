@@ -26,24 +26,24 @@ class ConnectContactFlowEndpoint(DictWrapper):
     @property
     def address(self) -> str:
         """The phone number."""
-        return self["Address"]
+        pass
 
     @property
     def endpoint_type(self) -> ConnectContactFlowEndpointType:
         """The endpoint type."""
-        return ConnectContactFlowEndpointType[self["Type"]]
+        pass
 
 
 class ConnectContactFlowQueue(DictWrapper):
     @property
     def arn(self) -> str:
         """The unique queue ARN."""
-        return self["ARN"]
+        pass
 
     @property
     def name(self) -> str:
         """The queue name."""
-        return self["Name"]
+        pass
 
 
 class ConnectContactFlowMediaStreamAudio(DictWrapper):
@@ -52,31 +52,31 @@ class ConnectContactFlowMediaStreamAudio(DictWrapper):
         """The number that identifies the Kinesis Video Streams fragment, in the stream used for Live media streaming,
         in which the customer audio stream started.
         """
-        return self["StartFragmentNumber"]
+        pass
 
     @property
     def start_timestamp(self) -> str | None:
         """When the customer audio stream started."""
-        return self["StartTimestamp"]
+        pass
 
     @property
     def stream_arn(self) -> str | None:
         """The ARN of the Kinesis Video stream used for Live media streaming that includes the customer data to
         reference.
         """
-        return self["StreamARN"]
+        pass
 
 
 class ConnectContactFlowMediaStreamCustomer(DictWrapper):
     @property
     def audio(self) -> ConnectContactFlowMediaStreamAudio:
-        return ConnectContactFlowMediaStreamAudio(self["Audio"])
+        pass
 
 
 class ConnectContactFlowMediaStreams(DictWrapper):
     @property
     def customer(self) -> ConnectContactFlowMediaStreamCustomer:
-        return ConnectContactFlowMediaStreamCustomer(self["Customer"])
+        pass
 
 
 class ConnectContactFlowData(DictWrapper):
@@ -86,66 +86,60 @@ class ConnectContactFlowData(DictWrapper):
         such as when using a Set contact attributes block in a contact flow.
         This map may be empty if there aren't any saved attributes.
         """
-        return self["Attributes"]
+        pass
 
     @property
     def channel(self) -> ConnectContactFlowChannel:
         """The method used to contact your contact center."""
-        return ConnectContactFlowChannel[self["Channel"]]
+        pass
 
     @property
     def contact_id(self) -> str:
         """The unique identifier of the contact."""
-        return self["ContactId"]
+        pass
 
     @property
     def customer_endpoint(self) -> ConnectContactFlowEndpoint | None:
         """Contains the customer’s address (number) and type of address."""
-        if self["CustomerEndpoint"] is not None:
-            return ConnectContactFlowEndpoint(self["CustomerEndpoint"])
-        return None
+        pass
 
     @property
     def initial_contact_id(self) -> str:
         """The unique identifier for the contact associated with the first interaction between the customer and your
         contact center. Use the initial contact ID to track contacts between contact flows.
         """
-        return self["InitialContactId"]
+        pass
 
     @property
     def initiation_method(self) -> ConnectContactFlowInitiationMethod:
         """How the contact was initiated."""
-        return ConnectContactFlowInitiationMethod[self["InitiationMethod"]]
+        pass
 
     @property
     def instance_arn(self) -> str:
         """The ARN for your Amazon Connect instance."""
-        return self["InstanceARN"]
+        pass
 
     @property
     def previous_contact_id(self) -> str:
         """The unique identifier for the contact before it was transferred.
         Use the previous contact ID to trace contacts between contact flows.
         """
-        return self["PreviousContactId"]
+        pass
 
     @property
     def queue(self) -> ConnectContactFlowQueue | None:
         """The current queue."""
-        if self["Queue"] is not None:
-            return ConnectContactFlowQueue(self["Queue"])
-        return None
+        pass
 
     @property
     def system_endpoint(self) -> ConnectContactFlowEndpoint | None:
         """Contains the address (number) the customer dialed to call your contact center and type of address."""
-        if self["SystemEndpoint"] is not None:
-            return ConnectContactFlowEndpoint(self["SystemEndpoint"])
-        return None
+        pass
 
     @property
     def media_streams(self) -> ConnectContactFlowMediaStreams:
-        return ConnectContactFlowMediaStreams(self["MediaStreams"])
+        pass
 
 
 class ConnectContactFlowEvent(DictWrapper):
@@ -159,9 +153,9 @@ class ConnectContactFlowEvent(DictWrapper):
     @property
     def contact_data(self) -> ConnectContactFlowData:
         """This is always passed by Amazon Connect for every contact. Some parameters are optional."""
-        return ConnectContactFlowData(self["Details"]["ContactData"])
+        pass
 
     @property
     def parameters(self) -> dict[str, str]:
         """These are parameters specific to this call that were defined when you created the Lambda function."""
-        return self["Details"]["Parameters"]
+        pass

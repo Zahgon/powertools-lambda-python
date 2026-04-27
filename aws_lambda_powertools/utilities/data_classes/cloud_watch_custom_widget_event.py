@@ -9,106 +9,106 @@ class TimeZone(DictWrapper):
     @property
     def label(self) -> str:
         """The time range label. Either 'UTC' or 'Local'"""
-        return self["label"]
+        pass
 
     @property
     def offset_iso(self) -> str:
         """The time range offset in the format +/-00:00"""
-        return self["offsetISO"]
+        pass
 
     @property
     def offset_in_minutes(self) -> int:
         """The time range offset in minutes"""
-        return int(self["offsetInMinutes"])
+        pass
 
 
 class TimeRange(DictWrapper):
     @property
     def mode(self) -> str:
         """The time range mode, i.e. 'relative' or 'absolute'"""
-        return self["mode"]
+        pass
 
     @property
     def start(self) -> int:
         """The start time within the time range"""
-        return self["start"]
+        pass
 
     @property
     def end(self) -> int:
         """The end time within the time range"""
-        return self["end"]
+        pass
 
     @property
     def relative_start(self) -> int | None:
         """The relative start time within the time range"""
-        return self.get("relativeStart")
+        pass
 
     @property
     def zoom_start(self) -> int | None:
         """The start time within the zoomed time range"""
-        return (self.get("zoom") or {}).get("start")
+        pass
 
     @property
     def zoom_end(self) -> int | None:
         """The end time within the zoomed time range"""
-        return (self.get("zoom") or {}).get("end")
+        pass
 
 
 class CloudWatchWidgetContext(DictWrapper):
     @property
     def dashboard_name(self) -> str:
         """Get dashboard name, in which the widget is used"""
-        return self["dashboardName"]
+        pass
 
     @property
     def widget_id(self) -> str:
         """Get widget ID"""
-        return self["widgetId"]
+        pass
 
     @property
     def domain(self) -> str:
         """AWS domain name"""
-        return self["domain"]
+        pass
 
     @property
     def account_id(self) -> str:
         """Get AWS Account ID"""
-        return self["accountId"]
+        pass
 
     @property
     def locale(self) -> str:
         """Get locale language"""
-        return self["locale"]
+        pass
 
     @property
     def timezone(self) -> TimeZone:
         """Timezone information of the dashboard"""
-        return TimeZone(self["timezone"])
+        pass
 
     @property
     def period(self) -> int:
         """The period shown on the dashboard"""
-        return int(self["period"])
+        pass
 
     @property
     def is_auto_period(self) -> bool:
         """Whether auto period is enabled"""
-        return bool(self["isAutoPeriod"])
+        pass
 
     @property
     def time_range(self) -> TimeRange:
         """The widget time range"""
-        return TimeRange(self["timeRange"])
+        pass
 
     @property
     def theme(self) -> str:
         """The dashboard theme, i.e. 'light' or 'dark'"""
-        return self["theme"]
+        pass
 
     @property
     def link_charts(self) -> bool:
         """The widget is linked to other charts"""
-        return bool(self["linkCharts"])
+        pass
 
     @property
     def title(self) -> str:
@@ -118,22 +118,22 @@ class CloudWatchWidgetContext(DictWrapper):
     @property
     def params(self) -> dict[str, Any]:
         """Get widget parameters"""
-        return self["params"]
+        pass
 
     @property
     def forms(self) -> dict[str, Any]:
         """Get widget form data"""
-        return self["forms"]["all"]
+        pass
 
     @property
     def height(self) -> int:
         """Get widget height"""
-        return int(self["height"])
+        pass
 
     @property
     def width(self) -> int:
         """Get widget width"""
-        return int(self["width"])
+        pass
 
 
 class CloudWatchDashboardCustomWidgetEvent(DictWrapper):
@@ -149,12 +149,9 @@ class CloudWatchDashboardCustomWidgetEvent(DictWrapper):
     @property
     def describe(self) -> bool:
         """Display widget documentation"""
-        return bool(self.get("describe", False))
+        pass
 
     @property
     def widget_context(self) -> CloudWatchWidgetContext | None:
         """The widget context"""
-        if self.get("widgetContext"):
-            return CloudWatchWidgetContext(self["widgetContext"])
-
-        return None
+        pass

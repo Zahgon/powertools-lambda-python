@@ -352,18 +352,7 @@ class AppSyncEventsResolver(Router):
         >>>
         >>> # Now events can handle "/chat/message" channel_path
         """
-
-        # Merge app and router context
-        logger.debug("Merging router and app context")
-        self.context.update(**router.context)
-
-        # use pointer to allow context clearance after event is processed e.g., resolve(evt, ctx)
-        router.context = self.context
-
-        logger.debug("Merging router resolver registries")
-        self._publish_registry.merge(router._publish_registry)
-        self._async_publish_registry.merge(router._async_publish_registry)
-        self._subscribe_registry.merge(router._subscribe_registry)
+        pass
 
     def _format_error_response(self, error=None) -> str:
         """

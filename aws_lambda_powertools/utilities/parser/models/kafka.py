@@ -75,19 +75,15 @@ class KafkaRecordModel(BaseModel):
     # key is optional; only decode if not None
     @field_validator("key", mode="before")
     def decode_key(cls, value):
-        return base64_decode(value) if value is not None else value
+        pass
 
     @field_validator("value", mode="before")
     def data_base64_decode(cls, value):
-        as_bytes = base64_decode(value)
-        return bytes_to_string(as_bytes)
+        pass
 
     @field_validator("headers", mode="before")
     def decode_headers_list(cls, value):
-        for header in value:
-            for key, values in header.items():
-                header[key] = decode_header_bytes(values)
-        return value
+        pass
 
 
 class KafkaBaseEventModel(BaseModel):
@@ -111,7 +107,7 @@ class KafkaBaseEventModel(BaseModel):
 
     @field_validator("bootstrapServers", mode="before")
     def split_servers(cls, value):
-        return value.split(SERVERS_DELIMITER) if value else None
+        pass
 
 
 class KafkaSelfManagedEventModel(KafkaBaseEventModel):

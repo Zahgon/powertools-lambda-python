@@ -12,10 +12,7 @@ class S3BatchOperationTaskModel(BaseModel):
 
     @model_validator(mode="before")
     def validate_s3bucket(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if values.get("s3BucketArn") and not values.get("s3Bucket"):
-            values["s3Bucket"] = values["s3BucketArn"].split(":::")[-1]
-
-        return values
+        pass
 
 
 class S3BatchOperationJobModel(BaseModel):

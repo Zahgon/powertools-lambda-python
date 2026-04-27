@@ -36,15 +36,7 @@ class LazyLoader(types.ModuleType):
 
     def _load(self):
         # Import the target module and insert it into the parent's namespace
-        module = importlib.import_module(self.__name__)
-        self._parent_module_globals[self._local_name] = module
-
-        # Update this object's dict so that if someone keeps a reference to the
-        #   LazyLoader, lookups are efficient (__getattr__ is only called on lookups
-        #   that fail).
-        self.__dict__.update(module.__dict__)
-
-        return module
+        pass
 
     def __getattr__(self, item):
         module = self._load()

@@ -21,9 +21,9 @@ class LambdaClientContext:
     @property
     def custom(self) -> dict[str, Any]:
         """A dict of custom values set by the mobile client application."""
-        return self._custom
+        pass
 
     @property
     def env(self) -> dict[str, Any]:
         """A dict of environment information provided by the AWS SDK."""
-        return self._env
+        pass

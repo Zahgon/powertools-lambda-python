@@ -69,44 +69,33 @@ class TypeDeserializer:
         return deserializer(value[dynamodb_type])
 
     def _deserialize_null(self, value: bool) -> None:
-        return None
+        pass
 
     def _deserialize_bool(self, value: bool) -> bool:
-        return value
+        pass
 
     def _deserialize_n(self, value: str) -> Decimal:
         # value is None or "."? It's zero
         # then return early
-        value = value.lstrip("0")
-        if not value or value == ".":
-            return DYNAMODB_CONTEXT.create_decimal(0)
-
-        if len(value) > 38:
-            # See: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes.Number
-            # Calculate the number of trailing zeros after the 38th character
-            tail = len(value[38:]) - len(value[38:].rstrip("0"))
-            # Trim the value: remove trailing zeros if any, or just take the first 38 characters
-            value = value[:-tail] if tail > 0 else value[:38]
-
-        return DYNAMODB_CONTEXT.create_decimal(value)
+        pass
 
     def _deserialize_s(self, value: str) -> str:
-        return value
+        pass
 
     def _deserialize_b(self, value: bytes) -> bytes:
-        return value
+        pass
 
     def _deserialize_ns(self, value: Sequence[str]) -> set[Decimal]:
-        return set(map(self._deserialize_n, value))
+        pass
 
     def _deserialize_ss(self, value: Sequence[str]) -> set[str]:
-        return set(map(self._deserialize_s, value))
+        pass
 
     def _deserialize_bs(self, value: Sequence[bytes]) -> set[bytes]:
-        return set(map(self._deserialize_b, value))
+        pass
 
     def _deserialize_l(self, value: Sequence[dict]) -> Sequence[Any]:
-        return [self.deserialize(v) for v in value]
+        pass
 
     def _deserialize_m(self, value: dict) -> dict:
-        return {k: self.deserialize(v) for k, v in value.items()}
+        pass

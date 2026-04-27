@@ -98,11 +98,7 @@ def resolve_env_var_choice(
 
 
 def base64_decode(value: str) -> bytes:
-    try:
-        logger.debug("Decoding base64 item to bytes")
-        return base64.b64decode(value)
-    except (BinAsciiError, TypeError):
-        raise ValueError("base64 decode failed - is this base64 encoded string?")
+    pass
 
 
 def bytes_to_base64_string(value: bytes) -> str:
@@ -114,10 +110,7 @@ def bytes_to_base64_string(value: bytes) -> str:
 
 
 def bytes_to_string(value: bytes) -> str:
-    try:
-        return value.decode("utf-8")
-    except (BinAsciiError, TypeError):
-        raise ValueError("base64 UTF-8 decode failed")
+    pass
 
 
 def powertools_dev_is_set() -> bool:
@@ -280,14 +273,11 @@ def abs_lambda_path(relative_path: str = "") -> str:
         Otherwise, it will use the current working directory.
         If the path is empty, it will return the current working directory.
     """
-    # Retrieve the LAMBDA_TASK_ROOT environment variable or default to an empty string
-    current_working_directory = os.environ.get("LAMBDA_TASK_ROOT", "") or str(Path.cwd())
-
-    return str(Path(current_working_directory, relative_path))
+    pass
 
 
 def sanitize_xray_segment_name(name: str) -> str:
-    return re.sub(constants.INVALID_XRAY_NAME_CHARACTERS, "", name)
+    pass
 
 
 def get_tracer_id() -> str | None:
@@ -301,14 +291,7 @@ def decode_header_bytes(byte_list):
     If any negative values exist, handle them as signed bytes.
     Otherwise use the normal bytes construction.
     """
-    has_negative = any(b < 0 for b in byte_list)
-
-    if not has_negative:
-        # Use normal bytes construction if all values are positive
-        return bytes(byte_list)
-    # Convert signed bytes to unsigned (0-255 range)
-    unsigned_bytes = [(b & 0xFF) for b in byte_list]
-    return bytes(unsigned_bytes)
+    pass
 
 
 def is_durable_context(context: Any) -> TypeGuard[DurableContextProtocol]:

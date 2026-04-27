@@ -368,27 +368,7 @@ class OpenAPIResponseValidationMiddleware(BaseMiddlewareHandler):
         """
         Prepares the response content for serialization.
         """
-        if isinstance(res, BaseModel):  # pragma: no cover
-            return _model_dump(  # pragma: no cover
-                res,
-                by_alias=True,
-                exclude_unset=exclude_unset,
-                exclude_defaults=exclude_defaults,
-                exclude_none=exclude_none,
-            )
-        elif isinstance(res, list):  # pragma: no cover
-            return [  # pragma: no cover
-                self._prepare_response_content(item, exclude_unset=exclude_unset, exclude_defaults=exclude_defaults)
-                for item in res
-            ]
-        elif isinstance(res, dict):  # pragma: no cover
-            return {  # pragma: no cover
-                k: self._prepare_response_content(v, exclude_unset=exclude_unset, exclude_defaults=exclude_defaults)
-                for k, v in res.items()
-            }
-        elif dataclasses.is_dataclass(res):  # pragma: no cover
-            return dataclasses.asdict(res)  # type: ignore[arg-type] # pragma: no cover
-        return res  # pragma: no cover
+        pass
 
 
 def _request_params_to_args(

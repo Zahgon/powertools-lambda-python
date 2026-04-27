@@ -105,7 +105,7 @@ class AWSEncryptionSDKProvider(BaseProvider):
         return self._key_provider.encrypt(data=data, provider_options=provider_options, **encryption_context)
 
     def decrypt(self, data: str, provider_options: dict | None = None, **encryption_context: str) -> Any:
-        return self._key_provider.decrypt(data=data, provider_options=provider_options, **encryption_context)
+        pass
 
 
 class KMSKeyProvider:
@@ -194,36 +194,7 @@ class KMSKeyProvider:
         ciphertext: bytes
             The decrypted data in bytes
         """
-        provider_options = provider_options or {}
-        self._validate_encryption_context(encryption_context)
-
-        try:
-            ciphertext_decoded = base64_decode(data)
-        except Error:
-            raise DataMaskingDecryptValueError(
-                "Data decryption failed. Please ensure that you are attempting to decrypt data that was previously encrypted.",  # noqa E501
-            )
-
-        try:
-            ciphertext, decryptor_header = self.client.decrypt(
-                source=ciphertext_decoded,
-                key_provider=self.key_provider,
-                **provider_options,
-            )
-        except DecryptKeyError:
-            raise DataMaskingDecryptKeyError(
-                "Failed to decrypt data - Please ensure you are using a valid Symmetric AWS KMS Key ARN, not KMS Key ID or alias.",  # noqa E501
-            )
-        except (TypeError, NotSupportedError):
-            raise DataMaskingDecryptValueError(
-                "Data decryption failed. Please ensure that you are attempting to decrypt data that was previously encrypted.",  # noqa E501
-            )
-
-        self._compare_encryption_context(decryptor_header.encryption_context, encryption_context)
-
-        decoded_ciphertext = bytes_to_string(ciphertext)
-
-        return self.json_deserializer(decoded_ciphertext)
+        pass
 
     @staticmethod
     def _validate_encryption_context(context: dict):
@@ -239,10 +210,4 @@ class KMSKeyProvider:
     @staticmethod
     def _compare_encryption_context(actual_context: dict, expected_context: dict):
         # We can safely remove encrypted data key after decryption for exact match verification
-        actual_context.pop(ENCRYPTED_DATA_KEY_CTX_KEY, None)
-
-        # Encryption context could be out of order hence a set
-        if set(actual_context.items()) != set(expected_context.items()):
-            raise DataMaskingContextMismatchError(
-                "Encryption context does not match. You must use the exact same context used during encryption",
-            )
+        pass

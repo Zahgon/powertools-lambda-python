@@ -36,7 +36,7 @@ class KinesisDataStreamRecordPayload(BaseModel):
 
     @field_validator("data", mode="before")
     def data_base64_decode(cls, value):
-        return base64_decode(value)
+        pass
 
 
 class KinesisDataStreamRecord(BaseModel):
@@ -69,10 +69,7 @@ class KinesisDataStreamRecord(BaseModel):
 
     def decompress_zlib_record_data_as_json(self) -> Dict:
         """Decompress Kinesis Record bytes data zlib compressed to JSON"""
-        if not isinstance(self.kinesis.data, bytes):
-            raise ValueError("We can only decompress bytes data, not custom models.")
-
-        return json.loads(zlib.decompress(self.kinesis.data, zlib.MAX_WBITS | 32))
+        pass
 
 
 class KinesisDataStreamModel(BaseModel):
@@ -83,8 +80,8 @@ class KinesisDataStreamModel(BaseModel):
 
 
 def extract_cloudwatch_logs_from_event(event: KinesisDataStreamModel) -> List[CloudWatchLogsDecode]:
-    return [CloudWatchLogsDecode(**record.decompress_zlib_record_data_as_json()) for record in event.Records]
+    pass
 
 
 def extract_cloudwatch_logs_from_record(record: KinesisDataStreamRecord) -> CloudWatchLogsDecode:
-    return CloudWatchLogsDecode(**record.decompress_zlib_record_data_as_json())
+    pass

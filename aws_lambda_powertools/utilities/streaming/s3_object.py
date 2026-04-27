@@ -97,30 +97,14 @@ class S3Object(IO[bytes]):
         """
         Retrieves the size of the underlying S3 object
         """
-        return self.raw_stream.size
+        pass
 
     @property
     def transformed_stream(self) -> IO[bytes]:
         """
         Returns a IO[bytes] stream with all the data transformations applied in order
         """
-        if self._transformed_stream is None:
-            # Create a stream which is the result of applying all the data transformations
-
-            # To start with, our transformed stream is the same as our raw seekable stream.
-            # This means that if there are no data transformations to be applied, IO is just
-            # delegated directly to the raw_stream.
-            transformed_stream = self.raw_stream
-
-            # Now we apply each transformation in order
-            # e.g: when self._data_transformations is [transform_1, transform_2], then
-            # transformed_stream is the equivalent of doing transform_2(transform_1(...(raw_stream)))
-            for transformation in self._data_transformations:
-                transformed_stream = transformation.transform(transformed_stream)
-
-            self._transformed_stream = transformed_stream
-
-        return self._transformed_stream
+        pass
 
     @overload
     def transform(self, transformations: BaseTransform[T] | Sequence[BaseTransform[T]], in_place: Literal[True]) -> T:
@@ -188,23 +172,23 @@ class S3Object(IO[bytes]):
     # From this point on, we're just implementing all the standard methods on the IO[bytes] type.
     # There's no magic here, just delegating all the calls to our transformed_stream.
     def seek(self, offset: int, whence: int = io.SEEK_SET) -> int:
-        return self.transformed_stream.seek(offset, whence)
+        pass
 
     def seekable(self) -> bool:
-        return self.transformed_stream.seekable()
+        pass
 
     def readable(self) -> bool:
-        return self.transformed_stream.readable()
+        pass
 
     def writable(self) -> bool:
-        return self.transformed_stream.writable()
+        pass
 
     def tell(self) -> int:
-        return self.transformed_stream.tell()
+        pass
 
     @property
     def closed(self) -> bool:
-        return self.transformed_stream.closed
+        pass
 
     def __enter__(self):
         return self
@@ -216,16 +200,7 @@ class S3Object(IO[bytes]):
         # Scenario 1: S3Object = SeekableIO, because there are no data transformations applied
         # In this scenario, we can only close the raw_stream. If we tried to also close the transformed_stream we would
         # get an error, since they are the same object, and we can't close the same stream twice.
-        self.raw_stream.close()
-
-        # Scenario 2: S3Object -> [Transformations] -> SeekableIO, because there are data transformations applied
-        # In this scenario, we also need to close the transformed_stream if it exists. The reason we test for
-        # existence is that the user might want to close the object without reading data from it. Example:
-        #
-        #   >>> s3object = S3Object(...., is_gzip=True)
-        #   >>> s3object.close() <- transformed_stream doesn't exist yet at this point
-        if self.raw_stream != self._transformed_stream and self._transformed_stream is not None:
-            self._transformed_stream.close()
+        pass
 
     def read(self, size: int = -1) -> bytes:
         return self.transformed_stream.read(size)
@@ -234,7 +209,7 @@ class S3Object(IO[bytes]):
         return self.transformed_stream.readline()
 
     def readlines(self, hint: int = -1) -> list[bytes]:
-        return self.transformed_stream.readlines(hint)
+        pass
 
     def __next__(self):
         return self.transformed_stream.__next__()
@@ -249,7 +224,7 @@ class S3Object(IO[bytes]):
         raise NotImplementedError(MESSAGE_STREAM_NOT_WRITABLE)
 
     def isatty(self) -> bool:
-        return False
+        pass
 
     def truncate(self, size: int | None = 0) -> int:
         raise NotImplementedError(MESSAGE_STREAM_NOT_WRITABLE)

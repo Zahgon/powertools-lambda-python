@@ -212,4 +212,4 @@ class LoggerBufferCache:
             The current size of the buffer for the key.
             Returns 0 if the key does not exist.
         """
-        return None if key not in self.cache else self.cache[key].current_size
+        pass

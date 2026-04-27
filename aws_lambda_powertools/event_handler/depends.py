@@ -91,24 +91,12 @@ class DependencyParam:
 
 def _get_depends_from_annotation(annotation: Any) -> Depends | None:
     """Extract a Depends instance from an Annotated[Type, Depends(...)] annotation."""
-    if get_origin(annotation) is Annotated:
-        for arg in get_args(annotation)[1:]:
-            if isinstance(arg, Depends):
-                return arg
-    return None
+    pass
 
 
 def _has_depends(func: Callable[..., Any]) -> bool:
     """Check if a callable has any Depends() parameters, without importing pydantic."""
-    try:
-        hints = get_type_hints(func, include_extras=True)
-    except Exception:
-        return False
-
-    for annotation in hints.values():
-        if _get_depends_from_annotation(annotation) is not None:
-            return True
-    return False
+    pass
 
 
 def build_dependency_tree(func: Callable[..., Any]) -> DependencyTree:
@@ -117,29 +105,7 @@ def build_dependency_tree(func: Callable[..., Any]) -> DependencyTree:
     This inspects the function parameters for ``Annotated[Type, Depends(...)]``
     annotations and recursively builds the tree — all without importing pydantic.
     """
-    try:
-        hints = get_type_hints(func, include_extras=True)
-    except Exception:
-        return DependencyTree()
-
-    dependencies: list[_DependencyNode] = []
-
-    for param_name, annotation in hints.items():
-        if param_name == "return":
-            continue
-
-        depends_instance = _get_depends_from_annotation(annotation)
-        if depends_instance is not None:
-            sub_tree = build_dependency_tree(depends_instance.dependency)
-            dependencies.append(
-                _DependencyNode(
-                    param_name=param_name,
-                    depends=depends_instance,
-                    sub_tree=sub_tree,
-                ),
-            )
-
-    return DependencyTree(dependencies=dependencies)
+    pass
 
 
 def solve_dependencies(
@@ -168,55 +134,4 @@ def solve_dependencies(
     dict[str, Any]
         Mapping of parameter name to resolved dependency value
     """
-    from aws_lambda_powertools.event_handler.request import Request as RequestClass
-
-    if dependency_cache is None:
-        dependency_cache = {}
-
-    values: dict[str, Any] = {}
-
-    for dep in dependant.dependencies:
-        use_fn = dep.depends.dependency
-
-        # Apply overrides (for testing)
-        if dependency_overrides and use_fn in dependency_overrides:
-            use_fn = dependency_overrides[use_fn]
-
-        # Check cache
-        if dep.depends.use_cache and use_fn in dependency_cache:
-            values[dep.param_name] = dependency_cache[use_fn]
-            continue
-
-        # Recursively resolve sub-dependencies
-        sub_values = solve_dependencies(
-            dependant=dep.dependant,
-            request=request,
-            dependency_overrides=dependency_overrides,
-            dependency_cache=dependency_cache,
-        )
-
-        # Inject Request if the dependency declares it
-        if request is not None:
-            try:
-                hints = get_type_hints(use_fn)
-            except Exception:  # pragma: no cover - defensive for broken annotations
-                hints = {}
-            for param_name, annotation in hints.items():
-                if annotation is RequestClass:
-                    sub_values[param_name] = request
-
-        try:
-            solved = use_fn(**sub_values)
-        except Exception as exc:
-            dep_name = getattr(use_fn, "__name__", repr(use_fn))
-            raise DependencyResolutionError(
-                f"Failed to resolve dependency '{dep_name}' for parameter '{dep.param_name}': {exc}",
-            ) from exc
-
-        # Cache result
-        if dep.depends.use_cache:
-            dependency_cache[use_fn] = solved
-
-        values[dep.param_name] = solved
-
-    return values
+    pass

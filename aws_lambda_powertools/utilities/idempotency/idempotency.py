@@ -188,34 +188,6 @@ def idempotent_function(
     def decorate(*args, **kwargs):
         # Skip idempotency controls when POWERTOOLS_IDEMPOTENCY_DISABLED has a truthy value
         # Raises a warning if not running in development mode
-        if strtobool(os.getenv(constants.IDEMPOTENCY_DISABLED_ENV, "false")):
-            warnings.warn(
-                message="Disabling idempotency is intended for development environments only "
-                "and should not be used in production.",
-                category=PowertoolsUserWarning,
-                stacklevel=2,
-            )
-            return function(*args, **kwargs)
-
-        if data_keyword_argument not in kwargs:
-            raise RuntimeError(
-                f"Unable to extract '{data_keyword_argument}' from keyword arguments."
-                f" Ensure this exists in your function's signature as well as the caller used it as a keyword argument",
-            )
-
-        payload = kwargs.get(data_keyword_argument)
-
-        idempotency_handler = IdempotencyHandler(
-            function=function,
-            function_payload=payload,
-            config=config,
-            persistence_store=persistence_store,
-            output_serializer=output_serializer,
-            key_prefix=key_prefix,
-            function_args=args,
-            function_kwargs=kwargs,
-        )
-
-        return idempotency_handler.handle()
+        pass
 
     return cast(AnyCallableT, decorate)

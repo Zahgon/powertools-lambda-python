@@ -12,5 +12,4 @@ class SuppressFilter(logging.Filter):
         otherwise it honours log propagation from any log record
         created by loggers who don't have a handler.
         """
-        logger = record.name
-        return self.logger not in logger
+        pass

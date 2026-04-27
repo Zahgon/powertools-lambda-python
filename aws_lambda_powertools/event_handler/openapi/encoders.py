@@ -310,7 +310,7 @@ def iso_format(o: datetime.date | datetime.time) -> str:
     """
     ISO format for date and time
     """
-    return o.isoformat()
+    pass
 
 
 def decimal_encoder(dec_value: Decimal) -> int | float:
@@ -327,10 +327,7 @@ def decimal_encoder(dec_value: Decimal) -> int | float:
     >>> decimal_encoder(Decimal("1"))
     1
     """
-    if dec_value.as_tuple().exponent >= 0:  # type: ignore[operator]
-        return int(dec_value)
-    else:
-        return float(dec_value)
+    pass
 
 
 # Encoders for types that are not JSON serializable

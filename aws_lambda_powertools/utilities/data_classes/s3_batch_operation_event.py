@@ -128,7 +128,7 @@ class S3BatchOperationResponse:
             )
 
     def add_result(self, result: S3BatchOperationResponseRecord):
-        self.results.append(result)
+        pass
 
     def asdict(self) -> dict:
         result_count = len(self.results)
@@ -148,34 +148,34 @@ class S3BatchOperationJob(DictWrapper):
     @property
     def get_id(self) -> str:
         # Note: this name conflicts with existing python builtins
-        return self["id"]
+        pass
 
     @property
     def user_arguments(self) -> dict[str, str]:
         """Get user arguments provided for this job (only for invocation schema 2.0)"""
-        return self.get("userArguments") or {}
+        pass
 
 
 class S3BatchOperationTask(DictWrapper):
     @property
     def task_id(self) -> str:
         """Get the task id"""
-        return self["taskId"]
+        pass
 
     @property
     def s3_key(self) -> str:
         """Get the object key using unquote_plus"""
-        return unquote_plus(self["s3Key"])
+        pass
 
     @property
     def s3_version_id(self) -> str | None:
         """Object version if bucket is versioning-enabled, otherwise null"""
-        return self.get("s3VersionId")
+        pass
 
     @property
     def s3_bucket_arn(self) -> str | None:
         """Get the s3 bucket arn (present only for invocationSchemaVersion '1.0')"""
-        return self.get("s3BucketArn")
+        pass
 
     @property
     def s3_bucket(self) -> str:
@@ -183,9 +183,7 @@ class S3BatchOperationTask(DictWrapper):
         Get the s3 bucket, either from 's3Bucket' property (invocationSchemaVersion '2.0')
         or from 's3BucketArn' (invocationSchemaVersion '1.0')
         """
-        if self.s3_bucket_arn:
-            return self.s3_bucket_arn.split(":::")[-1]
-        return self["s3Bucket"]
+        pass
 
     def build_task_batch_response(
         self,
@@ -201,11 +199,7 @@ class S3BatchOperationTask(DictWrapper):
         result_string : str
             string to identify in the report
         """
-        return S3BatchOperationResponseRecord(
-            task_id=self.task_id,
-            result_code=result_code,
-            result_string=result_string,
-        )
+        pass
 
 
 class S3BatchOperationEvent(DictWrapper):
@@ -219,7 +213,7 @@ class S3BatchOperationEvent(DictWrapper):
     @property
     def invocation_id(self) -> str:
         """Get the identifier of the invocation request"""
-        return self["invocationId"]
+        pass
 
     @property
     def invocation_schema_version(self) -> Literal["1.0", "2.0"]:
@@ -227,20 +221,19 @@ class S3BatchOperationEvent(DictWrapper):
         Get the schema version for the payload that Batch Operations sends when invoking an
         AWS Lambda function. Either '1.0' or '2.0'.
         """
-        return self["invocationSchemaVersion"]
+        pass
 
     @property
     def tasks(self) -> Iterator[S3BatchOperationTask]:
         """Get s3 batch operation tasks"""
-        for task in self["tasks"]:
-            yield S3BatchOperationTask(task)
+        pass
 
     @property
     def task(self) -> S3BatchOperationTask:
         """Get the first s3 batch operation task"""
-        return next(self.tasks)
+        pass
 
     @property
     def job(self) -> S3BatchOperationJob:
         """Get the s3 batch operation job"""
-        return S3BatchOperationJob(self["job"])
+        pass

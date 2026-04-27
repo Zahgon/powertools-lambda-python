@@ -183,18 +183,7 @@ class DataMasking:
             data_masker = DataMasking(provider=encryption_provider)
             encrypted = data_masker.decrypt(encrypted_data)
         """
-        data = prepare_data(data)
-        return self._apply_action(
-            data=data,
-            fields=None,
-            action=self.provider.decrypt,
-            provider_options=provider_options or {},
-            dynamic_mask=None,
-            custom_mask=None,
-            regex_pattern=None,
-            mask_format=None,
-            **encryption_context,
-        )
+        pass
 
     def erase(
         self,
@@ -232,19 +221,7 @@ class DataMasking:
         Any
             The data with sensitive information erased or masked.
         """
-        data = prepare_data(data)
-        if masking_rules:
-            return self._apply_masking_rules(data=data, masking_rules=masking_rules)
-        else:
-            return self._apply_action(
-                data=data,
-                fields=fields,
-                action=self.provider.erase,
-                dynamic_mask=dynamic_mask,
-                custom_mask=custom_mask,
-                regex_pattern=regex_pattern,
-                mask_format=mask_format,
-            )
+        pass
 
     def _apply_action(
         self,
@@ -422,47 +399,10 @@ class DataMasking:
         Returns:
             dict: The masked data dictionary
         """
-        result = deepcopy(data)
-
-        for path, rule in masking_rules.items():
-            try:
-                jsonpath_expr = parse(f"$.{path}")
-                matches = jsonpath_expr.find(result)
-
-                if not matches:
-                    warnings.warn(f"No matches found for path: {path}", stacklevel=2)
-                    continue
-
-                for match in matches:
-                    try:
-                        value = match.value
-                        if value is not None:
-                            masked_value = self.provider.erase(str(value), **rule)
-                            match.full_path.update(result, masked_value)
-
-                    except Exception as e:
-                        warnings.warn(
-                            f"Error masking value for path {path}: {str(e)}",
-                            category=PowertoolsUserWarning,
-                            stacklevel=2,
-                        )
-                        continue
-
-            except Exception as e:
-                warnings.warn(f"Error processing path {path}: {str(e)}", category=PowertoolsUserWarning, stacklevel=2)
-                continue
-
-        return result
+        pass
 
     def _mask_nested_field(self, data: dict, field_path: str, mask_function):
-        keys = field_path.split(".")
-        current = data
-        for key in keys[:-1]:
-            current = current.get(key, {})
-            if not isinstance(current, dict):
-                return
-        if keys[-1] in current:
-            current[keys[-1]] = self.provider.erase(current[keys[-1]], **mask_function)
+        pass
 
     @staticmethod
     def _call_action(
@@ -492,16 +432,7 @@ class DataMasking:
         Returns:
         - fields[field_name]: Returns the processed field value
         """
-        fields[field_name] = action(
-            field_value,
-            provider_options=provider_options,
-            dynamic_mask=dynamic_mask,
-            custom_mask=custom_mask,
-            regex_pattern=regex_pattern,
-            mask_format=mask_format,
-            **encryption_context,
-        )
-        return fields[field_name]
+        pass
 
     def _normalize_data_to_parse(self, data: str | dict) -> dict:
         if isinstance(data, str):

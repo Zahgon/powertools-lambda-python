@@ -12,13 +12,4 @@ class Encoder(json.JSONEncoder):
     """
 
     def default(self, obj):
-        if isinstance(obj, decimal.Decimal):
-            return math.nan if obj.is_nan() else str(obj)
-
-        if is_pydantic(obj):
-            return pydantic_to_dict(obj)
-
-        if is_dataclass(obj):
-            return dataclass_to_dict(obj)
-
-        return super().default(obj)
+        pass

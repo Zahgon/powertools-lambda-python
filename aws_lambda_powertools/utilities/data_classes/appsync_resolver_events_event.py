@@ -10,27 +10,27 @@ class AppSyncResolverEventsInfo(DictWrapper):
     @property
     def channel(self) -> dict[str, Any]:
         """Channel details including path and segments"""
-        return self["channel"]
+        pass
 
     @property
     def channel_path(self) -> str:
         """Provides direct access to the 'path' attribute within the 'channel' object."""
-        return self["channel"]["path"]
+        pass
 
     @property
     def channel_segments(self) -> list[str]:
         """Provides direct access to the 'segments' attribute within the 'channel' object."""
-        return self["channel"]["segments"]
+        pass
 
     @property
     def channel_namespace(self) -> dict:
         """Namespace configuration for the channel"""
-        return self["channelNamespace"]
+        pass
 
     @property
     def operation(self) -> str:
         """The operation being performed (e.g., PUBLISH, SUBSCRIBE)"""
-        return self["operation"]
+        pass
 
 
 class AppSyncResolverEventsEvent(AppSyncEventBase):
@@ -43,12 +43,12 @@ class AppSyncResolverEventsEvent(AppSyncEventBase):
     @property
     def events(self) -> list[dict[str, Any]]:
         """The payload sent to Lambda"""
-        return self.get("events") or [{}]
+        pass
 
     @property
     def out_errors(self) -> list:
         """The outErrors property"""
-        return self.get("outErrors") or []
+        pass
 
     @property
     def info(self) -> AppSyncResolverEventsInfo:

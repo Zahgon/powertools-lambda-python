@@ -63,20 +63,19 @@ class ModelField:
 
     @property
     def alias(self) -> str:
-        value = self.field_info.alias
-        return value if value is not None else self.name
+        pass
 
     @property
     def required(self) -> bool:
-        return self.field_info.is_required()
+        pass
 
     @property
     def default(self) -> Any:
-        return self.get_default()
+        pass
 
     @property
     def type_(self) -> Any:
-        return self.field_info.annotation
+        pass
 
     def __post_init__(self) -> None:
         # If the field_info.annotation is already an Annotated type with discriminator metadata,
@@ -177,7 +176,7 @@ def get_compat_model_name_map(fields: list[ModelField]) -> ModelNameMap:
 
 
 def get_annotation_from_field_info(annotation: Any, field_info: FieldInfo, field_name: str) -> Any:
-    return annotation
+    pass
 
 
 def model_rebuild(model: type[BaseModel]) -> None:
@@ -186,38 +185,7 @@ def model_rebuild(model: type[BaseModel]) -> None:
 
 def copy_field_info(*, field_info: FieldInfo, annotation: Any) -> FieldInfo:
     # Create a shallow copy of the field_info to preserve its type and all attributes
-    new_field = copy(field_info)
-
-    # Recursively extract all metadata from nested Annotated types
-    def extract_metadata(ann: Any) -> tuple[Any, list[Any]]:
-        """Extract base type and all non-FieldInfo metadata from potentially nested Annotated types."""
-        if get_origin(ann) is not Annotated:
-            return ann, []
-
-        args = get_args(ann)
-        base_type = args[0]
-        metadata = list(args[1:])
-
-        # If base type is also Annotated, recursively extract its metadata
-        if get_origin(base_type) is Annotated:
-            inner_base, inner_metadata = extract_metadata(base_type)
-            all_metadata = [m for m in inner_metadata + metadata if not isinstance(m, PydanticFieldInfo)]
-            return inner_base, all_metadata
-        else:
-            constraint_metadata = [m for m in metadata if not isinstance(m, PydanticFieldInfo)]
-            return base_type, constraint_metadata
-
-    # Extract base type and constraints
-    base_type, constraints = extract_metadata(annotation)
-
-    # Set the annotation with base type and all constraint metadata
-    # Use tuple unpacking for Python 3.10+ compatibility
-    if constraints:
-        new_field.annotation = Annotated[(base_type, *constraints)]
-    else:
-        new_field.annotation = base_type
-
-    return new_field
+    pass
 
 
 def get_missing_field_error(loc: tuple[str, ...]) -> dict[str, Any]:
@@ -236,26 +204,23 @@ def is_scalar_field(field: ModelField) -> bool:
 
 
 def is_scalar_sequence_field(field: ModelField) -> bool:
-    return field_annotation_is_scalar_sequence(field.field_info.annotation)
+    pass
 
 
 def is_sequence_field(field: ModelField) -> bool:
-    return field_annotation_is_sequence(field.field_info.annotation)
+    pass
 
 
 def is_bytes_field(field: ModelField) -> bool:
-    return is_bytes_or_nonable_bytes_annotation(field.type_)
+    pass
 
 
 def is_bytes_sequence_field(field: ModelField) -> bool:
-    return is_bytes_sequence_annotation(field.type_)
+    pass
 
 
 def serialize_sequence_value(*, field: ModelField, value: Any) -> Sequence[Any]:
-    origin_type = get_origin(field.field_info.annotation) or field.field_info.annotation
-    if not issubclass(origin_type, sequence_types):  # type: ignore[arg-type]
-        raise AssertionError(f"Expected sequence type, got {origin_type}")
-    return sequence_annotation_to_type[origin_type](value)  # type: ignore[no-any-return]
+    pass
 
 
 def _normalize_errors(errors: Sequence[Any]) -> list[dict[str, Any]]:
@@ -263,9 +228,7 @@ def _normalize_errors(errors: Sequence[Any]) -> list[dict[str, Any]]:
 
 
 def create_body_model(*, fields: Sequence[ModelField], model_name: str) -> type[BaseModel]:
-    field_params = {f.name: (f.field_info.annotation, f.field_info) for f in fields}
-    model: type[BaseModel] = create_model(model_name, **field_params)
-    return model
+    pass
 
 
 def _model_dump(model: BaseModel, mode: Literal["json", "python"] = "json", **kwargs: Any) -> Any:
@@ -301,48 +264,19 @@ def field_annotation_is_sequence(annotation: type[Any] | None) -> bool:
 
 
 def field_annotation_is_scalar_sequence(annotation: type[Any] | None) -> bool:
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
-        at_least_one_scalar_sequence = False
-        for arg in get_args(annotation):
-            if field_annotation_is_scalar_sequence(arg):
-                at_least_one_scalar_sequence = True
-                continue
-            elif not field_annotation_is_scalar(arg):
-                return False
-        return at_least_one_scalar_sequence
-    return field_annotation_is_sequence(annotation) and all(
-        field_annotation_is_scalar(sub_annotation) for sub_annotation in get_args(annotation)
-    )
+    pass
 
 
 def is_bytes_or_nonable_bytes_annotation(annotation: Any) -> bool:
-    if lenient_issubclass(annotation, bytes):
-        return True
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
-        for arg in get_args(annotation):
-            if lenient_issubclass(arg, bytes):
-                return True
-    return False
+    pass
 
 
 def is_bytes_sequence_annotation(annotation: Any) -> bool:
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
-        at_least_one = False
-        for arg in get_args(annotation):
-            if is_bytes_sequence_annotation(arg):
-                at_least_one = True
-                break
-        return at_least_one
-    return field_annotation_is_sequence(annotation) and all(
-        is_bytes_or_nonable_bytes_annotation(sub_annotation) for sub_annotation in get_args(annotation)
-    )
+    pass
 
 
 def value_is_sequence(value: Any) -> bool:
-    return isinstance(value, sequence_types) and not isinstance(value, (str, bytes))  # type: ignore[arg-type]
+    pass
 
 
 def _annotation_is_complex(annotation: type[Any] | None) -> bool:

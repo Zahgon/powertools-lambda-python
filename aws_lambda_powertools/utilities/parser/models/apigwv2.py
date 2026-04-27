@@ -44,7 +44,7 @@ class RequestContextV2Http(BaseModel):
     @field_validator("sourceIp", mode="before")
     @classmethod
     def _validate_source_ip(cls, value):
-        return _validate_source_ip(value=value)
+        pass
 
 
 class RequestContextV2(BaseModel):

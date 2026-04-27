@@ -37,10 +37,7 @@ def _initializer_botocore_session(session):
         If there is an issue while adding the extra header for the User-Agent.
 
     """
-    try:
-        session.register(TARGET_SDK_EVENT, _create_feature_function(DEFAULT_FEATURE))
-    except Exception:
-        logger.debug("Can't add extra header User-Agent")
+    pass
 
 
 def _create_feature_function(feature):
@@ -64,21 +61,7 @@ def _create_feature_function(feature):
     """
 
     def add_powertools_feature(request, **kwargs):
-        try:
-            headers = request.headers
-            header_user_agent = (
-                f"{headers['User-Agent']} {FEATURE_PREFIX}/{feature}/{powertools_version} PTEnv/{EXEC_ENV}"
-            )
-
-            # This function is exclusive to client and resources objects created in Powertools
-            # and must remove the no-op header, if present
-            if HEADER_NO_OP in headers["User-Agent"] and feature != DEFAULT_FEATURE:
-                # Remove HEADER_NO_OP + space
-                header_user_agent = header_user_agent.replace(f"{HEADER_NO_OP} ", "")
-
-            headers["User-Agent"] = f"{header_user_agent}"
-        except Exception:
-            logger.debug("Can't find User-Agent header")
+        pass
 
     return add_powertools_feature
 
@@ -102,10 +85,7 @@ def register_feature_to_session(session, feature):
         If the provided session does not have an event system.
 
     """
-    try:
-        session.events.register(TARGET_SDK_EVENT, _create_feature_function(feature))
-    except AttributeError as e:
-        logger.debug(f"session passed in doesn't have a event system:{e}")
+    pass
 
 
 # Add feature user-agent to given sdk botocore.session.Session

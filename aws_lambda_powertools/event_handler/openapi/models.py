@@ -35,17 +35,7 @@ class OpenAPIExtensions(BaseModel):
 
     @model_validator(mode="before")
     def serialize_openapi_extension_v2(self):
-        if isinstance(self, dict) and self.get("openapi_extensions"):
-            openapi_extension_value = self.get("openapi_extensions")
-
-            for extension_key in openapi_extension_value:
-                if not str(extension_key).startswith("x-"):
-                    raise SchemaValidationError("An OpenAPI extension key must start with x-")
-
-            self.update(openapi_extension_value)
-            self.pop("openapi_extensions", None)
-
-        return self
+        pass
 
 
 # https://swagger.io/specification/#contact-object

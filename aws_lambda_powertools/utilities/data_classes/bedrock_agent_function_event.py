@@ -6,15 +6,15 @@ from aws_lambda_powertools.utilities.data_classes.common import DictWrapper
 class BedrockAgentInfo(DictWrapper):
     @property
     def name(self) -> str:
-        return self["name"]
+        pass
 
     @property
     def id(self) -> str:  # noqa: A003
-        return self["id"]
+        pass
 
     @property
     def alias(self) -> str:
-        return self["alias"]
+        pass
 
     @property
     def version(self) -> str:
@@ -24,15 +24,15 @@ class BedrockAgentInfo(DictWrapper):
 class BedrockAgentFunctionParameter(DictWrapper):
     @property
     def name(self) -> str:
-        return self["name"]
+        pass
 
     @property
     def type(self) -> str:  # noqa: A003
-        return self["type"]
+        pass
 
     @property
     def value(self) -> str:
-        return self["value"]
+        pass
 
 
 class BedrockAgentFunctionEvent(DictWrapper):
@@ -45,19 +45,19 @@ class BedrockAgentFunctionEvent(DictWrapper):
 
     @property
     def message_version(self) -> str:
-        return self["messageVersion"]
+        pass
 
     @property
     def input_text(self) -> str:
-        return self["inputText"]
+        pass
 
     @property
     def session_id(self) -> str:
-        return self["sessionId"]
+        pass
 
     @property
     def action_group(self) -> str:
-        return self["actionGroup"]
+        pass
 
     @property
     def function(self) -> str:
@@ -65,17 +65,16 @@ class BedrockAgentFunctionEvent(DictWrapper):
 
     @property
     def parameters(self) -> list[BedrockAgentFunctionParameter]:
-        parameters = self.get("parameters") or []
-        return [BedrockAgentFunctionParameter(x) for x in parameters]
+        pass
 
     @property
     def agent(self) -> BedrockAgentInfo:
-        return BedrockAgentInfo(self["agent"])
+        pass
 
     @property
     def session_attributes(self) -> dict[str, str]:
-        return self.get("sessionAttributes", {}) or {}
+        pass
 
     @property
     def prompt_session_attributes(self) -> dict[str, str]:
-        return self.get("promptSessionAttributes", {}) or {}
+        pass

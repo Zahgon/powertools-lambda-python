@@ -83,18 +83,7 @@ class FeatureFlags:
         self._exception_handlers: dict[Exception, Callable] = {}
 
     def _match_by_action(self, action: str, condition_value: Any, context_value: Any) -> bool:
-        try:
-            func = RULE_ACTION_MAPPING.get(action, lambda a, b: False)
-            return func(context_value, condition_value)
-        except Exception as exc:
-            self.logger.debug(f"caught exception while matching action: action={action}, exception={str(exc)}")
-
-            handler = self._lookup_exception_handler(exc)
-            if handler:
-                self.logger.debug("Exception handler found! Delegating response.")
-                return handler(exc)
-
-            return False
+        pass
 
     def _evaluate_conditions(
         self,
@@ -104,38 +93,7 @@ class FeatureFlags:
         context: dict[str, Any],
     ) -> bool:
         """Evaluates whether context matches conditions, return False otherwise"""
-        rule_match_value = rule.get(schema.RULE_MATCH_VALUE)
-        conditions = cast(list[dict], rule.get(schema.CONDITIONS_KEY))
-
-        if not conditions:
-            self.logger.debug(
-                f"rule did not match, no conditions to match, rule_name={rule_name}, rule_value={rule_match_value}, "
-                f"name={feature_name} ",
-            )
-            return False
-
-        for condition in conditions:
-            context_value = context.get(condition.get(schema.CONDITION_KEY, ""))
-            cond_action = condition.get(schema.CONDITION_ACTION, "")
-            cond_value = condition.get(schema.CONDITION_VALUE)
-
-            # time based rule actions have no user context. the context is the condition key
-            if cond_action in (
-                schema.RuleAction.SCHEDULE_BETWEEN_TIME_RANGE.value,
-                schema.RuleAction.SCHEDULE_BETWEEN_DATETIME_RANGE.value,
-                schema.RuleAction.SCHEDULE_BETWEEN_DAYS_OF_WEEK.value,
-            ):
-                context_value = condition.get(schema.CONDITION_KEY)  # e.g., CURRENT_TIME
-
-            if not self._match_by_action(action=cond_action, condition_value=cond_value, context_value=context_value):
-                self.logger.debug(
-                    f"rule did not match action, rule_name={rule_name}, rule_value={rule_match_value}, "
-                    f"name={feature_name}, context_value={str(context_value)} ",
-                )
-                return False  # context doesn't match condition
-
-        self.logger.debug(f"rule matched, rule_name={rule_name}, rule_value={rule_match_value}, name={feature_name}")
-        return True
+        pass
 
     def _evaluate_rules(
         self,
@@ -147,22 +105,7 @@ class FeatureFlags:
         boolean_feature: bool,
     ) -> bool:
         """Evaluates whether context matches rules and conditions, otherwise return feature default"""
-        for rule_name, rule in rules.items():
-            rule_match_value = rule.get(schema.RULE_MATCH_VALUE)
-
-            # Context might contain PII data; do not log its value
-            self.logger.debug(
-                f"Evaluating rule matching, rule={rule_name}, feature={feature_name}, default={str(feat_default)}, boolean_feature={boolean_feature}",  # noqa: E501
-            )
-            if self._evaluate_conditions(rule_name=rule_name, feature_name=feature_name, rule=rule, context=context):
-                # Maintenance: Revisit before going GA.
-                return bool(rule_match_value) if boolean_feature else rule_match_value
-
-        # no rule matched, return default value of feature
-        self.logger.debug(
-            f"no rule matched, returning feature default, default={str(feat_default)}, name={feature_name}, boolean_feature={boolean_feature}",  # noqa: E501
-        )
-        return feat_default
+        pass
 
     def get_configuration(self) -> dict:
         """Get validated feature flag schema from configured store.
@@ -207,13 +150,7 @@ class FeatureFlags:
         }
         ```
         """
-        # parse result conf as JSON, keep in cache for max age defined in store
-        self.logger.debug(f"Fetching schema from registered store, store={self.store}")
-        config: dict = self.store.get_configuration()
-        validator = schema.SchemaValidator(schema=config, logger=self.logger)
-        validator.validate()
-
-        return config
+        pass
 
     def evaluate(self, *, name: str, context: dict[str, Any] | None = None, default: JSONType) -> JSONType:
         """Evaluate whether a feature flag should be enabled according to stored schema and input context
@@ -288,48 +225,7 @@ class FeatureFlags:
         SchemaValidationError
             When schema doesn't conform with feature flag schema
         """
-        if context is None:
-            context = {}
-
-        try:
-            features = self.get_configuration()
-        except ConfigurationStoreError as err:
-            self.logger.debug(f"Failed to fetch feature flags from store, returning default provided, reason={err}")
-            return default
-
-        feature = features.get(name)
-        if feature is None:
-            self.logger.debug(f"Feature not found; returning default provided, name={name}, default={default}")
-            return default
-
-        rules = feature.get(schema.RULES_KEY)
-        feat_default = feature.get(schema.FEATURE_DEFAULT_VAL_KEY)
-        # Maintenance: Revisit before going GA. We might to simplify customers on-boarding by not requiring it
-        # for non-boolean flags. It'll need minor implementation changes, docs changes, and maybe refactor
-        # get_enabled_features. We can minimize breaking change, despite Beta label, by having a new
-        # method `get_matching_features` returning dict[feature_name, feature_value]
-        boolean_feature = feature.get(
-            schema.FEATURE_DEFAULT_VAL_TYPE_KEY,
-            True,
-        )  # backwards compatibility, assume feature flag
-        if not rules:
-            self.logger.debug(
-                f"no rules found, returning feature default, name={name}, default={str(feat_default)}, boolean_feature={boolean_feature}",  # noqa: E501
-            )
-            # Maintenance: Revisit before going GA. We might to simplify customers on-boarding by not requiring it
-            # for non-boolean flags.
-            return bool(feat_default) if boolean_feature else feat_default
-
-        self.logger.debug(
-            f"looking for rule match, name={name}, default={str(feat_default)}, boolean_feature={boolean_feature}",  # noqa: E501
-        )
-        return self._evaluate_rules(
-            feature_name=name,
-            context=context,
-            feat_default=feat_default,
-            rules=rules,
-            boolean_feature=boolean_feature,
-        )
+        pass
 
     def get_enabled_features(self, *, context: dict[str, Any] | None = None) -> list[str]:
         """Get all enabled feature flags while also taking into account context
@@ -358,40 +254,7 @@ class FeatureFlags:
         SchemaValidationError
             When schema doesn't conform with feature flag schema
         """
-        if context is None:
-            context = {}
-
-        features_enabled: list[str] = []
-
-        try:
-            features: dict[str, Any] = self.get_configuration()
-        except ConfigurationStoreError as err:
-            self.logger.debug(f"Failed to fetch feature flags from store, returning empty list, reason={err}")
-            return features_enabled
-
-        self.logger.debug("Evaluating all features")
-        for name, feature in features.items():
-            rules = feature.get(schema.RULES_KEY, {})
-            feature_default_value = feature.get(schema.FEATURE_DEFAULT_VAL_KEY)
-            boolean_feature = feature.get(
-                schema.FEATURE_DEFAULT_VAL_TYPE_KEY,
-                True,
-            )  # backwards compatibility, assume feature flag
-
-            if feature_default_value and not rules:
-                self.logger.debug(f"feature is enabled by default and has no defined rules, name={name}")
-                features_enabled.append(name)
-            elif self._evaluate_rules(
-                feature_name=name,
-                context=context,
-                feat_default=feature_default_value,
-                rules=rules,
-                boolean_feature=boolean_feature,
-            ):
-                self.logger.debug(f"feature's calculated value is True, name={name}")
-                features_enabled.append(name)
-
-        return features_enabled
+        pass
 
     def validation_exception_handler(self, exc_class: Exception | list[Exception]):
         """Registers function to handle unexpected validation exceptions when evaluating flags.
@@ -415,22 +278,9 @@ class FeatureFlags:
             raise TypeError("re-raised") from exc
         ```
         """
-
-        def register_exception_handler(func: Callable[P, T]) -> Callable[P, T]:
-            if isinstance(exc_class, list):
-                for exp in exc_class:
-                    self._exception_handlers[exp] = func
-            else:
-                self._exception_handlers[exc_class] = func
-
-            return func
-
-        return register_exception_handler
+        pass
 
     def _lookup_exception_handler(self, exc: BaseException) -> Callable | None:
         # Use "Method Resolution Order" to allow for matching against a base class
         # of an exception
-        for cls in type(exc).__mro__:
-            if cls in self._exception_handlers:
-                return self._exception_handlers[cls]  # type: ignore[index]  # ty: ignore[invalid-argument-type]
-        return None
+        pass

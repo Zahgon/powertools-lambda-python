@@ -203,7 +203,7 @@ class BaseProvider(ABC):
         raise NotImplementedError()
 
     def clear_cache(self):
-        self.store.clear()
+        pass
 
     def fetch_from_cache(self, key: tuple):
         return self.store[key].value if key in self.store else {}
@@ -361,4 +361,4 @@ def transform_value(
 
 def clear_caches():
     """Clear cached parameter values from all providers"""
-    DEFAULT_PROVIDERS.clear()
+    pass

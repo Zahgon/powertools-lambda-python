@@ -434,17 +434,7 @@ class MetricManager:
 
         @functools.wraps(cast("Callable[..., Any]", lambda_handler))
         def decorate(event, context, *args, **kwargs):
-            unwrapped_context = context.lambda_context if is_durable_context(context) else context
-            try:
-                if default_dimensions:
-                    self.set_default_dimensions(**default_dimensions)
-                response = lambda_handler(event, unwrapped_context, *args, **kwargs)
-                if capture_cold_start_metric:
-                    self._add_cold_start_metric(context=unwrapped_context)
-            finally:
-                self.flush_metrics(raise_on_empty_metrics=raise_on_empty_metrics)
-
-            return response
+            pass
 
         return decorate
 

@@ -12,7 +12,7 @@ class TransferFamilyAuthorizer(DictWrapper):
     @property
     def username(self) -> str:
         """The username used for authentication"""
-        return self["username"]
+        pass
 
     @property
     def password(self) -> str | None:
@@ -20,22 +20,22 @@ class TransferFamilyAuthorizer(DictWrapper):
         The password used for authentication.
         None in case customer authenticating with certificates
         """
-        return self["password"]
+        pass
 
     @property
     def protocol(self) -> str:
         """The protocol can be SFTP, FTP or FTPS"""
-        return self["protocol"]
+        pass
 
     @property
     def server_id(self) -> str:
         """The AWS Transfer Family ServerID"""
-        return self["serverId"]
+        pass
 
     @property
     def source_ip(self) -> str:
         """The customer IP used for connection"""
-        return self["sourceIp"]
+        pass
 
 
 class TransferFamilyAuthorizerResponse:
@@ -50,35 +50,7 @@ class TransferFamilyAuthorizerResponse:
         user_uid: int | None = None,
         public_keys: str | None = None,
     ) -> dict[str, Any]:
-        response: dict[str, Any] = {}
-
-        if home_directory_type == "PATH":
-            if not home_directory:
-                raise ValueError("home_directory must be set when home_directory_type is PATH")
-
-            response["HomeDirectory"] = home_directory
-        elif home_directory_type == "LOGICAL":
-            if not home_directory_details:
-                raise ValueError("home_directory_details must be set when home_directory_type is LOGICAL")
-
-            response["HomeDirectoryDetails"] = json.dumps(home_directory_details)
-
-        else:
-            raise ValueError(f"Invalid home_directory_type: {home_directory_type}")
-
-        if user_uid is not None:
-            response["PosixProfile"] = {"Gid": user_gid, "Uid": user_gid}
-
-        if policy:
-            response["Policy"] = policy
-
-        if public_keys:
-            response["PublicKeys"] = public_keys
-
-        response["Role"] = role_arn
-        response["HomeDirectoryType"] = home_directory_type
-
-        return response
+        pass
 
     def build_authentication_response_efs(
         self,
@@ -125,17 +97,7 @@ class TransferFamilyAuthorizerResponse:
             If an invalid home_directory_type is provided or if required parameters are missing
             for the specified home_directory_type.
         """
-
-        return self._build_authentication_response(
-            role_arn=role_arn,
-            policy=policy,
-            home_directory=home_directory,
-            home_directory_details=home_directory_details,
-            home_directory_type=home_directory_type,
-            public_keys=public_keys,
-            user_gid=user_gid,
-            user_uid=user_uid,
-        )
+        pass
 
     def build_authentication_response_s3(
         self,
@@ -179,11 +141,4 @@ class TransferFamilyAuthorizerResponse:
             If an invalid home_directory_type is provided or if required parameters are missing
             for the specified home_directory_type.
         """
-        return self._build_authentication_response(
-            role_arn=role_arn,
-            policy=policy,
-            home_directory=home_directory,
-            home_directory_details=home_directory_details,
-            home_directory_type=home_directory_type,
-            public_keys=public_keys,
-        )
+        pass

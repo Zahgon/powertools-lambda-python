@@ -10,39 +10,39 @@ from aws_lambda_powertools.utilities.data_classes.shared_functions import base64
 class BasicProperties(DictWrapper):
     @property
     def content_type(self) -> str:
-        return self["contentType"]
+        pass
 
     @property
     def content_encoding(self) -> str:
-        return self["contentEncoding"]
+        pass
 
     @property
     def headers(self) -> dict[str, Any]:
-        return self["headers"]
+        pass
 
     @property
     def delivery_mode(self) -> int:
-        return self["deliveryMode"]
+        pass
 
     @property
     def priority(self) -> int:
-        return self["priority"]
+        pass
 
     @property
     def correlation_id(self) -> str:
-        return self["correlationId"]
+        pass
 
     @property
     def reply_to(self) -> str:
-        return self["replyTo"]
+        pass
 
     @property
     def expiration(self) -> str:
-        return self["expiration"]
+        pass
 
     @property
     def message_id(self) -> str:
-        return self["messageId"]
+        pass
 
     @property
     def timestamp(self) -> str:
@@ -50,47 +50,47 @@ class BasicProperties(DictWrapper):
 
     @property
     def get_type(self) -> str:
-        return self["type"]
+        pass
 
     @property
     def user_id(self) -> str:
-        return self["userId"]
+        pass
 
     @property
     def app_id(self) -> str:
-        return self["appId"]
+        pass
 
     @property
     def cluster_id(self) -> str:
-        return self["clusterId"]
+        pass
 
     @property
     def body_size(self) -> int:
-        return self["bodySize"]
+        pass
 
 
 class RabbitMessage(DictWrapper):
     @property
     def basic_properties(self) -> BasicProperties:
-        return BasicProperties(self["basicProperties"])
+        pass
 
     @property
     def redelivered(self) -> bool:
-        return self["redelivered"]
+        pass
 
     @property
     def data(self) -> str:
-        return self["data"]
+        pass
 
     @property
     def decoded_data(self) -> str:
         """Decodes the data as a str"""
-        return base64_decode(self.data)
+        pass
 
     @cached_property
     def json_data(self) -> Any:
         """Parses the data as json"""
-        return self._json_deserializer(self.decoded_data)
+        pass
 
 
 class RabbitMQEvent(DictWrapper):
@@ -116,8 +116,8 @@ class RabbitMQEvent(DictWrapper):
     @property
     def event_source_arn(self) -> str:
         """The Amazon Resource Name (ARN) of the event source"""
-        return self["eventSourceArn"]
+        pass
 
     @property
     def rmq_messages_by_queue(self) -> dict[str, list[RabbitMessage]]:
-        return self._rmq_messages_by_queue
+        pass

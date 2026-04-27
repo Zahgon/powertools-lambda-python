@@ -61,4 +61,4 @@ class EventBridgeModel(BaseModel):
     def validate_detail(cls, v, fields):
         # EventBridge Scheduler sends detail field as '{}' string when no payload is present
         # See: https://github.com/aws-powertools/powertools-lambda-python/issues/6112
-        return {} if fields.data.get("source") == "aws.scheduler" and v == "{}" else v
+        pass

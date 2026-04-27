@@ -29,72 +29,16 @@ class ConsumerRecordRecords(KafkaEventRecordBase):
 
     @cached_property
     def key(self) -> Any:
-        key = self.get("key")
-
-        # Return None if key doesn't exist
-        if not key:
-            return None
-
-        logger.debug("Deserializing key field")
-
-        # Determine schema type and schema string
-        schema_type = None
-        schema_value = None
-        output_serializer = None
-
-        if self.schema_config and self.schema_config.key_schema_type:
-            schema_type = self.schema_config.key_schema_type
-            schema_value = self.schema_config.key_schema
-            output_serializer = self.schema_config.key_output_serializer
-
-        # Always use get_deserializer if None it will default to DEFAULT
-        deserializer = get_deserializer(
-            schema_type=schema_type,
-            schema_value=schema_value,
-            field_metadata=self.key_schema_metadata,
-        )
-        deserialized_value = deserializer.deserialize(key)
-
-        # Apply output serializer if specified
-        if output_serializer:
-            return serialize_to_output_type(deserialized_value, output_serializer)
-
-        return deserialized_value
+        pass
 
     @cached_property
     def value(self) -> Any:
-        value = self["value"]
-
-        # Determine schema type and schema string
-        schema_type = None
-        schema_value = None
-        output_serializer = None
-
-        logger.debug("Deserializing value field")
-
-        if self.schema_config and self.schema_config.value_schema_type:
-            schema_type = self.schema_config.value_schema_type
-            schema_value = self.schema_config.value_schema
-            output_serializer = self.schema_config.value_output_serializer
-
-        # Always use get_deserializer if None it will default to DEFAULT
-        deserializer = get_deserializer(
-            schema_type=schema_type,
-            schema_value=schema_value,
-            field_metadata=self.value_schema_metadata,
-        )
-        deserialized_value = deserializer.deserialize(value)
-
-        # Apply output serializer if specified
-        if output_serializer:
-            return serialize_to_output_type(deserialized_value, output_serializer)
-
-        return deserialized_value
+        pass
 
     @property
     def original_value(self) -> str:
         """The original (base64 encoded) Kafka record value."""
-        return self["value"]
+        pass
 
     @property
     def original_key(self) -> str | None:
@@ -105,20 +49,17 @@ class ConsumerRecordRecords(KafkaEventRecordBase):
         a round-robin algorithm will be used to determine
         the partition for the message.
         """
-
-        return self.get("key")
+        pass
 
     @property
     def original_headers(self) -> list[dict[str, list[int]]]:
         """The raw Kafka record headers."""
-        return self["headers"]
+        pass
 
     @cached_property
     def headers(self) -> dict[str, bytes]:
         """Decodes the headers as a single dictionary."""
-        return CaseInsensitiveDict(
-            (k, decode_header_bytes(v)) for chunk in self.original_headers for k, v in chunk.items()
-        )
+        pass
 
 
 class ConsumerRecords(KafkaEventBase):
@@ -137,9 +78,7 @@ class ConsumerRecords(KafkaEventBase):
     @property
     def records(self) -> Iterator[ConsumerRecordRecords]:
         """The Kafka records."""
-        for chunk in self["records"].values():
-            for record in chunk:
-                yield ConsumerRecordRecords(data=record, schema_config=self.schema_config)
+        pass
 
     @property
     def record(self) -> ConsumerRecordRecords:
@@ -157,6 +96,4 @@ class ConsumerRecords(KafkaEventBase):
             If there are no more records available.
 
         """
-        if self._records is None:
-            self._records = self.records
-        return next(self._records)
+        pass

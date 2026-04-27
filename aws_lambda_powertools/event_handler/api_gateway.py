@@ -552,66 +552,7 @@ class Route:
         The Route Middleware stack is processed in reverse order. This is so the stack of
         middleware handlers is applied in the order of being added to the handler.
         """
-        # Build middleware stack in the correct order for validation:
-        # 1. Request validation middleware (first)
-        # 2. Router middlewares + user middlewares (middle)
-        # 3. Response validation middleware (before route handler)
-        # 4. Route handler adapter (last)
-
-        all_middlewares = []
-
-        # Determine if validation should be enabled for this route
-        # If route has explicit enable_validation setting, use it; otherwise, use resolver's global setting
-        route_validation_enabled = (
-            self.enable_validation if self.enable_validation is not None else app._enable_validation
-        )
-
-        # If route needs validation but resolver didn't create the middlewares, create them now
-        if route_validation_enabled and not hasattr(app, "_request_validation_middleware"):
-            from aws_lambda_powertools.event_handler.middlewares.openapi_validation import (
-                OpenAPIRequestValidationMiddleware,
-                OpenAPIResponseValidationMiddleware,
-            )
-
-            app._request_validation_middleware = OpenAPIRequestValidationMiddleware()
-            app._response_validation_middleware = OpenAPIResponseValidationMiddleware(
-                validation_serializer=app._serializer,
-                has_response_validation_error=app._has_response_validation_error,
-            )
-
-        # Add request validation middleware first if validation is enabled
-        if route_validation_enabled and hasattr(app, "_request_validation_middleware"):
-            all_middlewares.append(app._request_validation_middleware)
-
-        # Add user middlewares in the middle
-        all_middlewares.extend(router_middlewares + self.middlewares)
-
-        # Add response validation middleware before the route handler if validation is enabled
-        if route_validation_enabled and hasattr(app, "_response_validation_middleware"):
-            all_middlewares.append(app._response_validation_middleware)
-
-        logger.debug(f"Building middleware stack: {all_middlewares}")
-
-        # IMPORTANT:
-        # this must be the last middleware in the stack (tech debt for backward
-        # compatibility purposes)
-        #
-        # This adapter will:
-        #   1. Call the registered API passing only the expected route arguments extracted from the path
-        # and not the middleware.
-        #   2. Adapt the response type of the route handler (dict | tuple | Response)
-        # and normalise into a Response object so middleware will always have a constant signature
-        all_middlewares.append(_registered_api_adapter)
-
-        # Wrap the original route handler function in the middleware handlers
-        # using the MiddlewareWrapper class callable construct in reverse order to
-        # ensure middleware is applied in the order the user defined.
-        #
-        # Start with the route function and wrap from last to the first Middleware handler.
-        for handler in reversed(all_middlewares):
-            self._middleware_stack = MiddlewareFrame(current_middleware=handler, next_middleware=self._middleware_stack)
-
-        self._middleware_stack_built = True
+        pass
 
     async def call_async(
         self,
@@ -619,83 +560,20 @@ class Route:
         app: ApiGatewayResolver,
         route_arguments: dict[str, str],
     ) -> dict | tuple | Response:
-        from aws_lambda_powertools.event_handler.middlewares.async_utils import (
-            AsyncMiddlewareFrame,
-            _registered_api_adapter_async,
-        )
-
-        all_middlewares: list[Callable[..., Any]] = []
-
-        route_validation_enabled = (
-            self.enable_validation if self.enable_validation is not None else app._enable_validation
-        )
-
-        if route_validation_enabled and not hasattr(app, "_request_validation_middleware"):
-            from aws_lambda_powertools.event_handler.middlewares.openapi_validation import (
-                OpenAPIRequestValidationMiddleware,
-                OpenAPIResponseValidationMiddleware,
-            )
-
-            app._request_validation_middleware = OpenAPIRequestValidationMiddleware()
-            app._response_validation_middleware = OpenAPIResponseValidationMiddleware(
-                validation_serializer=app._serializer,
-                has_response_validation_error=app._has_response_validation_error,
-            )
-
-        if route_validation_enabled and hasattr(app, "_request_validation_middleware"):
-            all_middlewares.append(app._request_validation_middleware)
-
-        all_middlewares.extend(router_middlewares + self.middlewares)
-
-        if route_validation_enabled and hasattr(app, "_response_validation_middleware"):
-            all_middlewares.append(app._response_validation_middleware)
-
-        all_middlewares.append(_registered_api_adapter_async)
-
-        logger.debug(f"Building async middleware stack: {all_middlewares}")
-
-        if app._debug:
-            print(f"\nProcessing Route (async):::{self.func.__name__} ({app.context['_path']})")
-            print("\nAsync Middleware Stack:")
-            print("=================")
-            print("\n".join(getattr(item, "__name__", "Unknown") for item in all_middlewares))
-            print("=================")
-
-        app.append_context(_route_args=route_arguments)
-
-        # Build async chain from inside-out (not cached, avoids state conflicts with sync cache)
-        next_handler: Callable = self.func
-        for handler in reversed(all_middlewares):
-            next_handler = AsyncMiddlewareFrame(current_middleware=handler, next_middleware=next_handler)
-
-        return await next_handler(app)
+        pass
 
     @property
     def dependant(self) -> Dependant:
-        if self._dependant is None:
-            from aws_lambda_powertools.event_handler.openapi.dependant import get_dependant
-
-            self._dependant = get_dependant(path=self.openapi_path, call=self.func, responses=self.responses)
-
-        return self._dependant
+        pass
 
     @property
     def has_dependencies(self) -> bool:
         """Check if handler declares Depends() parameters without triggering full dependant computation."""
-        if self._has_dependencies is None:
-            from aws_lambda_powertools.event_handler.depends import _has_depends
-
-            self._has_dependencies = _has_depends(self.func)
-        return self._has_dependencies
+        pass
 
     @property
     def body_field(self) -> ModelField | None:
-        if self._body_field is None:
-            from aws_lambda_powertools.event_handler.openapi.dependant import get_body_field
-
-            self._body_field = get_body_field(dependant=self.dependant, name=self.operation_id)
-
-        return self._body_field
+        pass
 
     def _get_openapi_path(
         self,
@@ -1305,27 +1183,7 @@ class BaseRouter(ABC):
             return app.resolve(event, context)
         ```
         """
-        return self.route(
-            rule,
-            "HEAD",
-            cors,
-            compress,
-            cache_control,
-            summary,
-            description,
-            responses,
-            response_description,
-            tags,
-            operation_id,
-            include_in_schema,
-            security,
-            openapi_extensions,
-            deprecated,
-            enable_validation,
-            custom_response_validation_http_code,
-            status_code,
-            middlewares,
-        )
+        pass
 
     def _push_processed_stack_frame(self, frame: str):
         """
@@ -1333,7 +1191,7 @@ class BaseRouter(ABC):
         The stack frames will be used when exceptions are thrown and Powertools
         debug is enabled by developers.
         """
-        self.processed_stack_frames.append(frame)
+        pass
 
     def _reset_processed_stack(self):
         """Reset the Processed Stack Frames"""
@@ -1370,24 +1228,7 @@ class BaseRouter(ABC):
             return next_middleware(app)
         ```
         """
-        cached: Request | None = self.context.get("_request")
-        if cached is not None:
-            return cached
-
-        route: Route | None = self.context.get("_route")
-        if route is None:
-            raise RuntimeError(
-                "app.request is only available after route resolution. Use it inside middleware or a route handler.",
-            )
-
-        request = Request(
-            route_path=route.openapi_path,
-            path_parameters=self.context.get("_route_args", {}),
-            current_event=self.current_event,
-            context=self.context,
-        )
-        self.context["_request"] = request
-        return request
+        pass
 
 
 class MiddlewareFrame:
@@ -1463,20 +1304,7 @@ class MiddlewareFrame:
 
 def _find_request_param_name(func: Callable) -> str | None:
     """Return the name of the first parameter annotated as ``Request``, or ``None``."""
-    from typing import get_type_hints
-
-    try:
-        # get_type_hints resolves string annotations from ``from __future__ import annotations``
-        # using the function's own module globals.
-        hints = get_type_hints(func)
-    except Exception:
-        hints = {}
-
-    for param_name, annotation in hints.items():
-        if annotation is Request:
-            return param_name
-
-    return None
+    pass
 
 
 def _registered_api_adapter(
@@ -1505,31 +1333,7 @@ def _registered_api_adapter(
         The API Response Object
 
     """
-    route_args: dict = app.context.get("_route_args", {})
-    logger.debug(f"Calling API Route Handler: {route_args}")
-
-    # Inject a Request object when the handler declares a parameter typed as Request.
-    # Lookup is cached on the Route object to avoid repeated signature inspection.
-    route: Route | None = app.context.get("_route")
-    if route is not None:
-        if not route.request_param_name_checked:
-            route.request_param_name = _find_request_param_name(next_middleware)
-            route.request_param_name_checked = True
-        if route.request_param_name:
-            route_args = {**route_args, route.request_param_name: app.request}
-
-        # Resolve Depends() parameters
-        if route.has_dependencies:
-            from aws_lambda_powertools.event_handler.depends import build_dependency_tree, solve_dependencies
-
-            dep_values = solve_dependencies(
-                dependant=build_dependency_tree(route.func),
-                request=app.request,
-                dependency_overrides=app.dependency_overrides or None,
-            )
-            route_args.update(dep_values)
-
-    return app._to_response(next_middleware(**route_args))
+    pass
 
 
 class ApiGatewayResolver(BaseRouter):
@@ -2052,22 +1856,7 @@ class ApiGatewayResolver(BaseRouter):
         enable_swagger : Method to enable Swagger UI using these configurations
         OpenAPIConfig : Data class containing all OpenAPI configuration options
         """
-        self.openapi_config = OpenAPIConfig(
-            title=title,
-            version=version,
-            openapi_version=openapi_version,
-            summary=summary,
-            description=description,
-            tags=tags,
-            servers=servers,
-            terms_of_service=terms_of_service,
-            contact=contact,
-            license_info=license_info,
-            security_schemes=security_schemes,
-            security=security,
-            external_documentation=external_documentation,
-            openapi_extensions=openapi_extensions,
-        )
+        pass
 
     def configure_openapi_merge(
         self,
@@ -2161,35 +1950,7 @@ class ApiGatewayResolver(BaseRouter):
         configure_openapi : Configure OpenAPI for a single resolver
         enable_swagger : Enable Swagger UI
         """
-        from aws_lambda_powertools.event_handler.openapi.merge import OpenAPIMerge
-
-        if exclude is None:
-            exclude = ["**/tests/**", "**/__pycache__/**", "**/.venv/**"]
-
-        self._openapi_merge = OpenAPIMerge(
-            title=title,
-            version=version,
-            openapi_version=openapi_version,
-            summary=summary,
-            description=description,
-            tags=tags,
-            servers=servers,
-            terms_of_service=terms_of_service,
-            contact=contact,
-            license_info=license_info,
-            security_schemes=security_schemes,
-            security=security,
-            external_documentation=external_documentation,
-            openapi_extensions=openapi_extensions,
-            on_conflict=on_conflict,
-        )
-        self._openapi_merge.discover(
-            path=path,
-            pattern=pattern,
-            exclude=exclude,
-            resolver_name=resolver_name,
-            recursive=recursive,
-        )
+        pass
 
     def get_openapi_merge_schema(self) -> dict[str, Any]:
         """Get the merged OpenAPI schema from multiple Lambda handlers.
@@ -2204,9 +1965,7 @@ class ApiGatewayResolver(BaseRouter):
         RuntimeError
             If configure_openapi_merge has not been called.
         """
-        if not hasattr(self, "_openapi_merge") or self._openapi_merge is None:
-            raise RuntimeError("configure_openapi_merge must be called before get_openapi_merge_schema")
-        return self._openapi_merge.get_openapi_schema()
+        pass
 
     def get_openapi_merge_json_schema(self) -> str:
         """Get the merged OpenAPI schema as JSON from multiple Lambda handlers.
@@ -2221,9 +1980,7 @@ class ApiGatewayResolver(BaseRouter):
         RuntimeError
             If configure_openapi_merge has not been called.
         """
-        if not hasattr(self, "_openapi_merge") or self._openapi_merge is None:
-            raise RuntimeError("configure_openapi_merge must be called before get_openapi_merge_json_schema")
-        return self._openapi_merge.get_openapi_json_schema()
+        pass
 
     def enable_swagger(
         self,
@@ -2305,93 +2062,7 @@ class ApiGatewayResolver(BaseRouter):
 
         @self.get(path, middlewares=middlewares, include_in_schema=False, compress=compress)
         def swagger_handler():
-            query_params = self.current_event.query_string_parameters or {}
-
-            # Check for query parameters; if "format" is specified as "oauth2-redirect",
-            # send the oauth2-redirect HTML stanza so OAuth2 can be used
-            # Source: https://github.com/swagger-api/swagger-ui/blob/master/dist/oauth2-redirect.html
-            if query_params.get("format") == "oauth2-redirect":
-                return Response(
-                    status_code=200,
-                    content_type="text/html",
-                    body=generate_oauth2_redirect_html(),
-                )
-
-            base_path = self._get_base_path()
-
-            if swagger_base_url:
-                swagger_js = f"{swagger_base_url}/swagger-ui-bundle.min.js"
-                swagger_css = f"{swagger_base_url}/swagger-ui.min.css"
-            else:
-                # We now inject CSS and JS into the SwaggerUI file
-                swagger_js = Path.open(
-                    Path(__file__).parent / "openapi" / "swagger_ui" / "swagger-ui-bundle.min.js",
-                    encoding="utf-8",
-                ).read()
-                swagger_css = Path.open(
-                    Path(__file__).parent / "openapi" / "swagger_ui" / "swagger-ui.min.css",
-                    encoding="utf-8",
-                ).read()
-
-            openapi_servers = servers or [Server(url=(base_path or "/"))]
-
-            # Use merged schema if configure_openapi_merge was called, otherwise use regular schema
-            if hasattr(self, "_openapi_merge") and self._openapi_merge is not None:
-                # Get merged schema as JSON string (already properly serialized)
-                escaped_spec = self._openapi_merge.get_openapi_json_schema().replace("</", "<\\/")
-            else:
-                spec = self.get_openapi_schema(
-                    title=title,
-                    version=version,
-                    openapi_version=openapi_version,
-                    summary=summary,
-                    description=description,
-                    tags=tags,
-                    servers=openapi_servers,
-                    terms_of_service=terms_of_service,
-                    contact=contact,
-                    license_info=license_info,
-                    security_schemes=security_schemes,
-                    security=security,
-                    external_documentation=external_documentation,
-                    openapi_extensions=openapi_extensions,
-                )
-
-                # The .replace('</', '<\\/') part is necessary to prevent a potential issue where the JSON
-                # string contains </script> or similar tags. Escaping the forward slash in </ as <\/ ensures
-                # that the JSON does not inadvertently close the script tag, and the JSON remains a valid
-                # string within the JavaScript code.
-                escaped_spec = model_json(
-                    spec,
-                    by_alias=True,
-                    exclude_none=True,
-                    indent=2,
-                ).replace("</", "<\\/")
-
-            # Check for query parameters; if "format" is specified as "json",
-            # respond with the JSON used in the OpenAPI spec
-            # Example: https://www.example.com/swagger?format=json
-            if query_params.get("format") == "json":
-                return Response(
-                    status_code=200,
-                    content_type=DEFAULT_CONTENT_TYPE,
-                    body=escaped_spec,
-                )
-
-            body = generate_swagger_html(
-                escaped_spec,
-                swagger_js,
-                swagger_css,
-                swagger_base_url,
-                oauth2_config,
-                persist_authorization,
-            )
-
-            return Response(
-                status_code=200,
-                content_type="text/html",
-                body=body,
-            )
+            pass
 
     def _validate_route_response_validation_error_http_code(
         self,
@@ -2445,52 +2116,7 @@ class ApiGatewayResolver(BaseRouter):
         )
 
         def register_resolver(func: AnyCallableT) -> AnyCallableT:
-            methods = (method,) if isinstance(method, str) else method
-            logger.debug(f"Adding route using rule {rule} and methods: {','.join(m.upper() for m in methods)}")
-
-            cors_enabled = self._cors_enabled if cors is None else cors
-
-            for item in methods:
-                _route = Route(
-                    item,
-                    rule,
-                    self._compile_regex(rule),
-                    func,
-                    cors_enabled,
-                    compress,
-                    cache_control,
-                    summary,
-                    description,
-                    responses,
-                    response_description,
-                    tags,
-                    operation_id,
-                    include_in_schema,
-                    security,
-                    openapi_extensions,
-                    deprecated,
-                    enable_validation,
-                    custom_response_validation_http_code,
-                    status_code,
-                    middlewares,
-                )
-
-                # The more specific route wins.
-                # We store dynamic (/studies/{studyid}) and static routes (/studies/fetch) separately.
-                # Then attempt a match for static routes before dynamic routes.
-                # This ensures that the most specific route is prioritized and processed first (studies/fetch).
-                if _route.rule.groups > 0:
-                    self._dynamic_routes.append(_route)
-                else:
-                    self._static_routes.append(_route)
-
-                self._create_route_key(item, rule)
-
-                if cors_enabled:
-                    logger.debug(f"Registering method {item.upper()} to Allow Methods in CORS")
-                    self._cors_methods.add(item.upper())
-
-            return func
+            pass
 
         return register_resolver
 
@@ -2600,119 +2226,16 @@ class ApiGatewayResolver(BaseRouter):
             return asyncio.run(app.resolve_async(event, context))
         ```
         """
-        if isinstance(event, BaseProxyEvent):
-            warnings.warn(
-                "You don't need to serialize event to Event Source Data Class when using Event Handler; "
-                "see issue #1152",
-                stacklevel=2,
-            )
-            event = event.raw_event
-
-        if self._debug:
-            print(self._serializer(cast(dict, event)))
-
-        BaseRouter.current_event = self._to_proxy_event(cast(dict, event))
-        BaseRouter.lambda_context = context
-
-        response = (await self._resolve_async()).build(self.current_event, self._cors)
-
-        if self._debug:
-            print("\nProcessed Middlewares:")
-            print("======================")
-            print("\n".join(self.processed_stack_frames))
-            print("======================")
-
-        self.clear_context()
-
-        return response
+        pass
 
     async def _resolve_async(self) -> ResponseBuilder:
-        method = self.current_event.http_method.upper()
-        path = self._remove_prefix(self.current_event.path)
-
-        registered_routes = self._static_routes + self._dynamic_routes
-
-        for route in registered_routes:
-            if method != route.method:
-                continue
-            match_results: Match | None = route.rule.match(path)
-            if match_results:
-                logger.debug("Found a registered route. Calling async function")
-                self.append_context(_route=route, _path=path)
-
-                route_keys = self._convert_matches_into_route_keys(match_results)
-                return await self._call_route_async(route, route_keys)
-
-        return await self._handle_not_found_async(method=method, path=path)
+        pass
 
     async def _call_route_async(self, route: Route, route_arguments: dict[str, str]) -> ResponseBuilder:
-        try:
-            self._reset_processed_stack()
-
-            response = await route.call_async(
-                router_middlewares=self._router_middlewares,
-                app=self,
-                route_arguments=route_arguments,
-            )
-
-            return self._response_builder_class(
-                response=self._to_response(response),  # type: ignore[arg-type]
-                serializer=self._serializer,
-                route=route,
-            )
-        except Exception as exc:
-            response_builder = self._call_exception_handler(exc, route)
-            if response_builder:
-                return response_builder
-
-            logger.exception(exc)
-            if self._debug:
-                return self._response_builder_class(
-                    response=Response(
-                        status_code=500,
-                        content_type=content_types.TEXT_PLAIN,
-                        body="".join(traceback.format_exc()),
-                    ),
-                    serializer=self._serializer,
-                    route=route,
-                )
-
-            raise
+        pass
 
     async def _handle_not_found_async(self, method: str, path: str) -> ResponseBuilder:
-        logger.debug(f"No match found for path {path} and method {method}")
-
-        def not_found_handler():
-            _headers: dict[str, Any] = {}
-
-            if self._cors and method == "OPTIONS":
-                logger.debug("Pre-flight request detected. Returning CORS with empty response")
-                _headers["Access-Control-Allow-Methods"] = CORSConfig.build_allow_methods(self._cors_methods)
-                return Response(status_code=204, content_type=None, headers=_headers, body="")
-
-            custom_not_found_handler = self.exception_handler_manager.lookup_exception_handler(NotFoundError)
-            if custom_not_found_handler:
-                return custom_not_found_handler(NotFoundError())
-
-            return Response(
-                status_code=HTTPStatus.NOT_FOUND.value,
-                content_type=content_types.APPLICATION_JSON,
-                headers=_headers,
-                body={"statusCode": HTTPStatus.NOT_FOUND.value, "message": "Not found"},
-            )
-
-        route = Route(
-            rule=self._compile_regex(r".*"),
-            method=method,
-            path=path,
-            func=not_found_handler,
-            cors=self._cors_enabled,
-            compress=False,
-        )
-
-        self.append_context(_route=route, _path=path)
-
-        return await self._call_route_async(route=route, route_arguments={})
+        pass
 
     def __call__(self, event, context) -> Any:
         return self.resolve(event, context)
@@ -2848,27 +2371,7 @@ class ApiGatewayResolver(BaseRouter):
             Response
                 HTTP 404 response
             """
-            _headers: dict[str, Any] = {}
-
-            # Pre-flight request? Return immediately to avoid browser error
-            if self._cors and method == "OPTIONS":
-                logger.debug("Pre-flight request detected. Returning CORS with empty response")
-                _headers["Access-Control-Allow-Methods"] = CORSConfig.build_allow_methods(self._cors_methods)
-
-                return Response(status_code=204, content_type=None, headers=_headers, body="")
-
-            # Customer registered 404 route? Call it.
-            custom_not_found_handler = self.exception_handler_manager.lookup_exception_handler(NotFoundError)
-            if custom_not_found_handler:
-                return custom_not_found_handler(NotFoundError())
-
-            # No CORS and no custom 404 fn? Default response
-            return Response(
-                status_code=HTTPStatus.NOT_FOUND.value,
-                content_type=content_types.APPLICATION_JSON,
-                headers=_headers,
-                body={"statusCode": HTTPStatus.NOT_FOUND.value, "message": "Not found"},
-            )
+            pass
 
         # We create a route to trigger entire request chain (middleware+exception handlers)
         route = Route(
@@ -2926,12 +2429,10 @@ class ApiGatewayResolver(BaseRouter):
             raise
 
     def not_found(self, func: Callable | None = None):
-        if func is None:
-            return self.exception_handler(NotFoundError)
-        return self.exception_handler(NotFoundError)(func)
+        pass
 
     def exception_handler(self, exc_class: type[Exception] | list[type[Exception]]):
-        return self.exception_handler_manager.exception_handler(exc_class=exc_class)
+        pass
 
     def _call_exception_handler(self, exp: Exception, route: Route) -> ResponseBuilder | None:
         handler = self.exception_handler_manager.lookup_exception_handler(type(exp))
@@ -3034,41 +2535,7 @@ class ApiGatewayResolver(BaseRouter):
         prefix : str, optional
             An optional prefix to be added to the originally defined rule
         """
-
-        # Add reference to parent ApiGatewayResolver to support use cases where people subclass it to add custom logic
-        router.api_resolver = self
-
-        logger.debug("Merging App context with Router context")
-        self.context.update(**router.context)
-
-        logger.debug("Appending Router middlewares into App middlewares.")
-        self._router_middlewares = self._router_middlewares + router._router_middlewares
-
-        logger.debug("Appending Router exception_handler into App exception_handler.")
-        self.exception_handler_manager.update_exception_handlers(router._exception_handlers)
-
-        # use pointer to allow context clearance after event is processed e.g., resolve(evt, ctx)
-        router.context = self.context
-
-        # Iterate through the routes defined in the router to configure and apply middlewares for each route
-        for route, func in router._routes.items():
-            new_route = route
-
-            if prefix:
-                rule = route[0]
-                rule = prefix if rule == "/" else f"{prefix}{rule}"
-                new_route = (rule, *route[1:])
-
-            # Middlewares are stored by route separately - must grab them to include
-            # Middleware store the route without prefix, so we must not include prefix when grabbing
-            middlewares = router._routes_with_middleware.get(route)
-
-            # Need to use "type: ignore" here since mypy does not like a named parameter after
-            # tuple expansion since may cause duplicate named parameters in the function signature.
-            # In this case this is not possible since the tuple expansion is from a hashable source
-            # and the `middlewares` list is a non-hashable structure so will never be included.
-            # Still need to ignore for mypy checks or will cause failures (false-positive)
-            self.route(*new_route, middlewares=middlewares)(func)  # type: ignore
+        pass
 
     @staticmethod
     def _get_fields_from_routes(routes: Sequence[Route]) -> list[ModelField]:
@@ -3139,59 +2606,12 @@ class Router(BaseRouter):
     ) -> Callable[[AnyCallableT], AnyCallableT]:
         def register_route(func: AnyCallableT) -> AnyCallableT:
             # All dict keys needs to be hashable. So we'll need to do some conversions:
-            methods = (method,) if isinstance(method, str) else tuple(method)
-            frozen_responses = _FrozenDict(responses) if responses else None
-            frozen_tags = frozenset(tags) if tags else None
-            frozen_security = _FrozenListDict(security) if security else None
-            frozen_openapi_extensions = _FrozenDict(openapi_extensions) if openapi_extensions else None
-
-            route_key = (
-                rule,
-                methods,
-                cors,
-                compress,
-                cache_control,
-                summary,
-                description,
-                frozen_responses,
-                response_description,
-                frozen_tags,
-                operation_id,
-                include_in_schema,
-                frozen_security,
-                frozen_openapi_extensions,
-                deprecated,
-                enable_validation,
-                custom_response_validation_http_code,
-                status_code,
-            )
-
-            # Collate Middleware for routes
-            if middlewares is not None:
-                for handler in middlewares:
-                    if self._routes_with_middleware.get(route_key) is None:
-                        self._routes_with_middleware[route_key] = [handler]
-                    else:
-                        self._routes_with_middleware[route_key].append(handler)
-            else:
-                self._routes_with_middleware[route_key] = []
-
-            self._routes[route_key] = func
-
-            return func
+            pass
 
         return register_route
 
     def exception_handler(self, exc_class: type[Exception] | list[type[Exception]]):
-        def register_exception_handler(func: Callable):
-            if isinstance(exc_class, list):
-                for exp in exc_class:
-                    self._exception_handlers[exp] = func
-            else:
-                self._exception_handlers[exc_class] = func
-            return func
-
-        return register_exception_handler
+        pass
 
 
 class APIGatewayRestResolver(ApiGatewayResolver):

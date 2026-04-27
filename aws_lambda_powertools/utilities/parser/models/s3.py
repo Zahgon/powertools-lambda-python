@@ -486,15 +486,7 @@ class S3RecordModel(BaseModel):
 
     @model_validator(mode="before")
     def validate_s3_object(cls, values):
-        event_name = values.get("eventName")
-        s3_data = values.get("s3")
-        # IntelligentTiering events use 'get_object' instead of 'object'
-        s3_object = s3_data.get("object") or s3_data.get("get_object")
-        if ":Delete" not in event_name and (s3_object.get("size") is None or s3_object.get("eTag") is None):
-            raise ValueError(
-                "Size and eTag fields are required for all events except ObjectRemoved:* and LifecycleExpiration:*.",
-            )
-        return values
+        pass
 
 
 class S3Model(BaseModel):

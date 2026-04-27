@@ -372,18 +372,7 @@ class AppSyncResolver(Router):
         router : Router
             A router containing a dict of field resolvers
         """
-
-        # Merge app and router context
-        logger.debug("Merging router and app context")
-        self.context.update(**router.context)
-
-        # use pointer to allow context clearance after event is processed e.g., resolve(evt, ctx)
-        router.context = self.context
-
-        logger.debug("Merging router resolver registries")
-        self._resolver_registry.merge(router._resolver_registry)
-        self._batch_resolver_registry.merge(router._batch_resolver_registry)
-        self._async_batch_resolver_registry.merge(router._async_batch_resolver_registry)
+        pass
 
     def resolver(self, type_name: str = "*", field_name: str | None = None) -> Callable:
         """Registers direct resolver function for GraphQL type and field name.
@@ -496,5 +485,4 @@ class AppSyncResolver(Router):
         Callable:
             A decorator function that registers the exception handler.
         """
-
-        return self.exception_handler_manager.exception_handler(exc_class=exc_class)
+        pass

@@ -18,13 +18,7 @@ class BaseBatchProcessingError(Exception):
         self.child_exceptions = child_exceptions or []
 
     def format_exceptions(self, parent_exception_str):
-        exception_list = [f"{parent_exception_str}\n"]
-        for exception in self.child_exceptions:
-            extype, ex, tb = exception
-            formatted = "".join(traceback.format_exception(extype, ex, tb))
-            exception_list.append(formatted)
-
-        return "\n".join(exception_list)
+        pass
 
 
 class BatchProcessingError(BaseBatchProcessingError):

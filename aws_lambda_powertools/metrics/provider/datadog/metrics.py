@@ -113,8 +113,7 @@ class DatadogMetrics:
         self.provider.clear_metrics()
 
     def clear_default_tags(self) -> None:
-        self.provider.default_tags.clear()
-        self.default_tags.clear()
+        pass
 
     # We now allow customers to bring their own instance
     # of the DatadogProvider provider
@@ -122,8 +121,8 @@ class DatadogMetrics:
     # To access this attribute on the provider instance.
     @property
     def namespace(self):
-        return self.provider.namespace
+        pass
 
     @namespace.setter
     def namespace(self, namespace):
-        self.provider.namespace = namespace
+        pass

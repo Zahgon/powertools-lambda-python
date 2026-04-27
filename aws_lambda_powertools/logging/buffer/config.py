@@ -65,14 +65,14 @@ class LoggerBufferConfig:
     @property
     def max_bytes(self) -> int:
         """Maximum buffer size in bytes."""
-        return self._max_bytes
+        pass
 
     @property
     def buffer_at_verbosity(self) -> str:
         """Minimum log level to buffer."""
-        return self._buffer_at_verbosity
+        pass
 
     @property
     def flush_on_error_log(self) -> bool:
         """Flag to flush buffer on error."""
-        return self._flush_on_error_log
+        pass

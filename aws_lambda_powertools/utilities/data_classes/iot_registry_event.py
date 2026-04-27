@@ -15,7 +15,7 @@ class IoTCoreRegistryEventsBase(DictWrapper):
         """
         The unique identifier for the event.
         """
-        return self["eventId"]
+        pass
 
     @property
     def timestamp(self) -> datetime:
@@ -41,56 +41,56 @@ class IoTCoreThingEvent(IoTCoreRegistryEventsBase):
         """
         The event type, which will always be "THING_EVENT".
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> str:
         """
         The operation type for the event (e.g., CREATED, UPDATED, DELETED).
         """
-        return self["operation"]
+        pass
 
     @property
     def thing_id(self) -> str:
         """
         The unique identifier for the thing.
         """
-        return self["thingId"]
+        pass
 
     @property
     def account_id(self) -> str:
         """
         The account ID associated with the event.
         """
-        return self["accountId"]
+        pass
 
     @property
     def thing_name(self) -> str:
         """
         The name of the thing.
         """
-        return self["thingName"]
+        pass
 
     @property
     def version_number(self) -> int:
         """
         The version number of the thing.
         """
-        return self["versionNumber"]
+        pass
 
     @property
     def thing_type_name(self) -> str | None:
         """
         The thing type name if available, or None if not specified.
         """
-        return self.get("thingTypeName")
+        pass
 
     @property
     def attributes(self) -> dict[str, Any]:
         """
         The dictionary of attributes associated with the thing.
         """
-        return self["attributes"]
+        pass
 
 
 class IoTCoreThingTypeEvent(IoTCoreRegistryEventsBase):
@@ -104,70 +104,70 @@ class IoTCoreThingTypeEvent(IoTCoreRegistryEventsBase):
         """
         The event type, corresponding to a thing type event.
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> EVENT_CRUD_OPERATION:
         """
         The operation performed on the thing type (e.g., CREATED, UPDATED, DELETED).
         """
-        return self["operation"]
+        pass
 
     @property
     def account_id(self) -> str:
         """
         The account ID associated with the event.
         """
-        return self["accountId"]
+        pass
 
     @property
     def thing_type_id(self) -> str:
         """
         The unique identifier for the thing type.
         """
-        return self["thingTypeId"]
+        pass
 
     @property
     def thing_type_name(self) -> str:
         """
         The name of the thing type.
         """
-        return self["thingTypeName"]
+        pass
 
     @property
     def is_deprecated(self) -> bool:
         """
         Whether the thing type is marked as deprecated.
         """
-        return self["isDeprecated"]
+        pass
 
     @property
     def deprecation_date(self) -> datetime | None:
         """
         The deprecation date of the thing type, or None if not available.
         """
-        return datetime.fromisoformat(self["deprecationDate"]) if self.get("deprecationDate") else None
+        pass
 
     @property
     def searchable_attributes(self) -> list[str]:
         """
         The list of attributes that are searchable for the thing type.
         """
-        return self["searchableAttributes"]
+        pass
 
     @property
     def propagating_attributes(self) -> list[dict[str, str]]:
         """
         The list of attributes to propagate for the thing type.
         """
-        return self["propagatingAttributes"]
+        pass
 
     @property
     def description(self) -> str:
         """
         The description of the thing type.
         """
-        return self["description"]
+        pass
 
 
 class IoTCoreThingTypeAssociationEvent(IoTCoreRegistryEventsBase):
@@ -180,35 +180,35 @@ class IoTCoreThingTypeAssociationEvent(IoTCoreRegistryEventsBase):
         """
         The event type, related to the thing type association event.
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> Literal["THING_TYPE_ASSOCIATION_EVENT"]:
         """
         The operation type, which is always "THING_TYPE_ASSOCIATION_EVENT".
         """
-        return self["operation"]
+        pass
 
     @property
     def thing_id(self) -> str:
         """
         The unique identifier for the associated thing.
         """
-        return self["thingId"]
+        pass
 
     @property
     def thing_name(self) -> str:
         """
         The name of the associated thing.
         """
-        return self["thingName"]
+        pass
 
     @property
     def thing_type_name(self) -> str:
         """
         The name of the associated thing type.
         """
-        return self["thingTypeName"]
+        pass
 
 
 class IoTCoreThingGroupEvent(IoTCoreRegistryEventsBase):
@@ -221,84 +221,84 @@ class IoTCoreThingGroupEvent(IoTCoreRegistryEventsBase):
         """
         The event type, corresponding to the thing group event.
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> EVENT_CRUD_OPERATION:
         """
         The operation type (e.g., CREATED, UPDATED, DELETED) performed on the thing group.
         """
-        return self["operation"]
+        pass
 
     @property
     def account_id(self) -> str:
         """
         The account ID associated with the event.
         """
-        return self["accountId"]
+        pass
 
     @property
     def thing_group_id(self) -> str:
         """
         The unique identifier for the thing group.
         """
-        return self["thingGroupId"]
+        pass
 
     @property
     def thing_group_name(self) -> str:
         """
         The name of the thing group.
         """
-        return self["thingGroupName"]
+        pass
 
     @property
     def version_number(self) -> int:
         """
         The version number of the thing group.
         """
-        return self["versionNumber"]
+        pass
 
     @property
     def parent_group_name(self) -> str | None:
         """
         The name of the parent group, or None if not applicable.
         """
-        return self.get("parentGroupName")
+        pass
 
     @property
     def parent_group_id(self) -> str | None:
         """
         The ID of the parent group, or None if not applicable.
         """
-        return self.get("parentGroupId")
+        pass
 
     @property
     def description(self) -> str:
         """
         The description of the thing group.
         """
-        return self["description"]
+        pass
 
     @property
     def root_to_parent_thing_groups(self) -> list[dict[str, str]]:
         """
         The list of root-to-parent thing group mappings.
         """
-        return self["rootToParentThingGroups"]
+        pass
 
     @property
     def attributes(self) -> dict[str, Any]:
         """
         The attributes associated with the thing group.
         """
-        return self["attributes"]
+        pass
 
     @property
     def dynamic_group_mapping_id(self) -> str | None:
         """
         The dynamic group mapping ID if available, or None if not specified.
         """
-        return self.get("dynamicGroupMappingId")
+        pass
 
 
 class IoTCoreAddOrRemoveFromThingGroupEvent(IoTCoreRegistryEventsBase):
@@ -311,56 +311,56 @@ class IoTCoreAddOrRemoveFromThingGroupEvent(IoTCoreRegistryEventsBase):
         """
         The event type, corresponding to the add/remove from thing group event.
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> EVENT_ADD_REMOVE_OPERATION:
         """
         The operation (ADDED or REMOVED) performed on the thing in the group.
         """
-        return self["operation"]
+        pass
 
     @property
     def account_id(self) -> str:
         """
         The account ID associated with the event.
         """
-        return self["accountId"]
+        pass
 
     @property
     def group_arn(self) -> str:
         """
         The ARN of the group the thing was added to or removed from.
         """
-        return self["groupArn"]
+        pass
 
     @property
     def group_id(self) -> str:
         """
         The unique identifier of the group.
         """
-        return self["groupId"]
+        pass
 
     @property
     def thing_arn(self) -> str:
         """
         The ARN of the thing being added or removed.
         """
-        return self["thingArn"]
+        pass
 
     @property
     def thing_id(self) -> str:
         """
         The unique identifier for the thing being added or removed.
         """
-        return self["thingId"]
+        pass
 
     @property
     def membership_id(self) -> str:
         """
         The unique membership ID for the thing within the group.
         """
-        return self["membershipId"]
+        pass
 
 
 class IoTCoreAddOrDeleteFromThingGroupEvent(IoTCoreRegistryEventsBase):
@@ -373,46 +373,46 @@ class IoTCoreAddOrDeleteFromThingGroupEvent(IoTCoreRegistryEventsBase):
         """
         The event type, corresponding to the add/delete from thing group event.
         """
-        return self["eventType"]
+        pass
 
     @property
     def operation(self) -> EVENT_ADD_REMOVE_OPERATION:
         """
         The operation (ADDED or REMOVED) performed on the child group.
         """
-        return self["operation"]
+        pass
 
     @property
     def account_id(self) -> str:
         """
         The account ID associated with the event.
         """
-        return self["accountId"]
+        pass
 
     @property
     def thing_group_id(self) -> str:
         """
         The unique identifier of the thing group.
         """
-        return self["thingGroupId"]
+        pass
 
     @property
     def thing_group_name(self) -> str:
         """
         The name of the thing group.
         """
-        return self["thingGroupName"]
+        pass
 
     @property
     def child_group_id(self) -> str:
         """
         The unique identifier of the child group being added or removed.
         """
-        return self["childGroupId"]
+        pass
 
     @property
     def child_group_name(self) -> str:
         """
         The name of the child group being added or removed.
         """
-        return self["childGroupName"]
+        pass

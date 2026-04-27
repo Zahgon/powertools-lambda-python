@@ -48,21 +48,7 @@ class OAuth2Config(BaseModel):
 
     @field_validator("clientSecret")
     def client_secret_only_on_dev(cls, v: Optional[str]) -> Optional[str]:
-        if not v:
-            return None
-
-        if not powertools_dev_is_set():
-            raise ValueError(
-                "cannot use client_secret without POWERTOOLS_DEV mode. See "
-                "https://docs.powertools.aws.dev/lambda/python/latest/#optimizing-for-non-production-environments",
-            )
-        else:
-            warnings.warn(
-                "OAuth2Config is using client_secret and POWERTOOLS_DEV is set. This reveals sensitive information. "
-                "DO NOT USE THIS OUTSIDE LOCAL DEVELOPMENT",
-                stacklevel=2,
-            )
-            return v
+        pass
 
 
 def generate_oauth2_redirect_html() -> str:

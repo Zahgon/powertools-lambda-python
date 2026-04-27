@@ -43,13 +43,7 @@ class ResolverRegistry:
         """
 
         def _register(func) -> Callable:
-            logger.debug(f"Adding resolver `{func.__name__}` for field `{type_name}.{field_name}`")
-            self.resolvers[f"{type_name}.{field_name}"] = {
-                "func": func,
-                "raise_on_error": raise_on_error,
-                "aggregate": aggregate,
-            }
-            return func
+            pass
 
         return _register
 
@@ -78,4 +72,4 @@ class ResolverRegistry:
         other_registry : ResolverRegistry
             Registry to merge from
         """
-        self.resolvers.update(**other_registry.resolvers)
+        pass

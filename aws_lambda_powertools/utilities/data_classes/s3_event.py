@@ -15,46 +15,46 @@ if TYPE_CHECKING:
 class S3Identity(DictWrapper):
     @property
     def principal_id(self) -> str:
-        return self["principalId"]
+        pass
 
 
 class S3RequestParameters(DictWrapper):
     @property
     def source_ip_address(self) -> str:
-        return self["sourceIPAddress"]
+        pass
 
 
 class S3EventNotificationEventBridgeBucket(DictWrapper):
     @property
     def name(self) -> str:
-        return self["name"]
+        pass
 
 
 class S3EventBridgeNotificationObject(DictWrapper):
     @property
     def key(self) -> str:
         """Object key"""
-        return unquote_plus(self["key"])
+        pass
 
     @property
     def size(self) -> int | None:
         """Object size. Object deletion event doesn't contain size."""
-        return self.get("size")
+        pass
 
     @property
     def etag(self) -> str:
         """Object eTag. Object deletion event doesn't contain eTag; we default to empty string"""
-        return self.get("etag") or ""
+        pass
 
     @property
     def version_id(self) -> str:
         """Object version ID"""
-        return self["version-id"]
+        pass
 
     @property
     def sequencer(self) -> str:
         """Object key"""
-        return self["sequencer"]
+        pass
 
 
 class S3EventBridgeNotificationDetail(DictWrapper):
@@ -66,27 +66,27 @@ class S3EventBridgeNotificationDetail(DictWrapper):
     @property
     def bucket(self) -> S3EventNotificationEventBridgeBucket:
         """Get the bucket name for the S3 notification"""
-        return S3EventNotificationEventBridgeBucket(self["bucket"])
+        pass
 
     @property
     def object(self) -> S3EventBridgeNotificationObject:  # noqa: A003 # ignore shadowing built-in grammar
         """Get the request-id for the S3 notification"""
-        return S3EventBridgeNotificationObject(self["object"])
+        pass
 
     @property
     def request_id(self) -> str:
         """Get the request-id for the S3 notification"""
-        return self["request-id"]
+        pass
 
     @property
     def requester(self) -> str:
         """Get the AWS account ID or AWS service principal of requester for the S3 notification"""
-        return self["requester"]
+        pass
 
     @property
     def source_ip_address(self) -> str | None:
         """Get the source IP address of S3 request. Only present for events triggered by an S3 request."""
-        return self.get("source-ip-address")
+        pass
 
     @property
     def reason(self) -> str | None:
@@ -96,7 +96,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
         `CompleteMultipartUpload`. For 'Object Deleted' events, this is set to `DeleteObject` when an object is deleted
         by an S3 API call, or 'Lifecycle Expiration' when an object is deleted by an S3 Lifecycle expiration rule.
         """
-        return self.get("reason")
+        pass
 
     @property
     def deletion_type(self) -> str | None:
@@ -106,7 +106,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
         this is set to 'Permanently Deleted'. When a delete marker is created for a versioned object, this is set to
         'Delete Marker Created'.
         """
-        return self.get("deletion-type")
+        pass
 
     @property
     def restore_expiry_time(self) -> str | None:
@@ -114,7 +114,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
 
         For 'Object Restore Completed' events, the time when the temporary copy of the object will be deleted from S3.
         """
-        return self.get("restore-expiry-time")
+        pass
 
     @property
     def source_storage_class(self) -> str | None:
@@ -123,7 +123,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
         For 'Object Restore Initiated' and 'Object Restore Completed' events, the storage class of the object being
         restored.
         """
-        return self.get("source-storage-class")
+        pass
 
     @property
     def destination_storage_class(self) -> str | None:
@@ -131,7 +131,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
 
         For 'Object Storage Class Changed' events, the new storage class of the object.
         """
-        return self.get("destination-storage-class")
+        pass
 
     @property
     def destination_access_tier(self) -> str | None:
@@ -139,7 +139,7 @@ class S3EventBridgeNotificationDetail(DictWrapper):
 
         For 'Object Access Tier Changed' events, the new access tier of the object.
         """
-        return self.get("destination-access-tier")
+        pass
 
 
 class S3EventBridgeNotificationEvent(EventBridgeEvent):
@@ -153,65 +153,65 @@ class S3EventBridgeNotificationEvent(EventBridgeEvent):
     @property
     def detail(self) -> S3EventBridgeNotificationDetail:  # type: ignore[override]
         """S3 notification details"""
-        return S3EventBridgeNotificationDetail(self["detail"])
+        pass
 
 
 class S3Bucket(DictWrapper):
     @property
     def name(self) -> str:
-        return self["name"]
+        pass
 
     @property
     def owner_identity(self) -> S3Identity:
-        return S3Identity(self["ownerIdentity"])
+        pass
 
     @property
     def arn(self) -> str:
-        return self["arn"]
+        pass
 
 
 class S3Object(DictWrapper):
     @property
     def key(self) -> str:
         """Object key"""
-        return self["key"]
+        pass
 
     @property
     def size(self) -> int:
         """Object byte size"""
-        return int(self["size"])
+        pass
 
     @property
     def etag(self) -> str:
         """Object eTag. Object deletion event doesn't contain eTag; we default to empty string"""
-        return self.get("eTag") or ""
+        pass
 
     @property
     def version_id(self) -> str | None:
         """Object version if bucket is versioning-enabled, otherwise null"""
-        return self.get("versionId")
+        pass
 
     @property
     def sequencer(self) -> str:
         """A string representation of a hexadecimal value used to determine event sequence,
         only used with PUTs and DELETEs
         """
-        return self["sequencer"]
+        pass
 
 
 class S3Message(DictWrapper):
     @property
     def s3_schema_version(self) -> str:
-        return self["s3SchemaVersion"]
+        pass
 
     @property
     def configuration_id(self) -> str:
         """ID found in the bucket notification configuration"""
-        return self["configurationId"]
+        pass
 
     @property
     def bucket(self) -> S3Bucket:
-        return S3Bucket(self["bucket"])
+        pass
 
     @property
     def get_object(self) -> S3Object:
@@ -220,21 +220,19 @@ class S3Message(DictWrapper):
         Note: IntelligentTiering events use 'get_object' as the actual key name,
         while other S3 events use 'object'. This method handles both cases.
         """
-        # IntelligentTiering events use 'get_object', others use 'object'
-        object_data = self.get("get_object") or self["object"]
-        return S3Object(object_data)
+        pass
 
 
 class S3EventRecordGlacierRestoreEventData(DictWrapper):
     @property
     def lifecycle_restoration_expiry_time(self) -> str:
         """Time when the object restoration will be expired."""
-        return self["lifecycleRestorationExpiryTime"]
+        pass
 
     @property
     def lifecycle_restore_storage_class(self) -> str:
         """Source storage class for restore"""
-        return self["lifecycleRestoreStorageClass"]
+        pass
 
 
 class S3EventRecordGlacierEventData(DictWrapper):
@@ -244,7 +242,7 @@ class S3EventRecordGlacierEventData(DictWrapper):
 
         The glacierEventData key is only visible for s3:ObjectRestore:Completed events
         """
-        return S3EventRecordGlacierRestoreEventData(self["restoreEventData"])
+        pass
 
 
 class S3EventRecordIntelligentTieringEventData(DictWrapper):
@@ -254,14 +252,14 @@ class S3EventRecordIntelligentTieringEventData(DictWrapper):
 
         The intelligentTieringEventData key is only visible for IntelligentTiering events.
         """
-        return self["destinationAccessTier"]
+        pass
 
 
 class S3EventRecord(DictWrapper):
     @property
     def event_version(self) -> str:
         """The eventVersion key value contains a major and minor version in the form <major>.<minor>."""
-        return self["eventVersion"]
+        pass
 
     @property
     def event_source(self) -> str:
@@ -271,26 +269,26 @@ class S3EventRecord(DictWrapper):
     @property
     def aws_region(self) -> str:
         """aws region eg: us-east-1"""
-        return self["awsRegion"]
+        pass
 
     @property
     def event_time(self) -> str:
         """The time, in ISO-8601 format, for example, 1970-01-01T00:00:00.000Z, when S3 finished
         processing the request"""
-        return self["eventTime"]
+        pass
 
     @property
     def event_name(self) -> str:
         """Event type"""
-        return self["eventName"]
+        pass
 
     @property
     def user_identity(self) -> S3Identity:
-        return S3Identity(self["userIdentity"])
+        pass
 
     @property
     def request_parameters(self) -> S3RequestParameters:
-        return S3RequestParameters(self["requestParameters"])
+        pass
 
     @property
     def response_elements(self) -> dict[str, str]:
@@ -300,23 +298,21 @@ class S3EventRecord(DictWrapper):
         as those that Amazon S3 returns in the response to the request that initiates the events, so they can be
         used to match the event to the request.
         """
-        return self["responseElements"]
+        pass
 
     @property
     def s3(self) -> S3Message:
-        return S3Message(self["s3"])
+        pass
 
     @property
     def glacier_event_data(self) -> S3EventRecordGlacierEventData | None:
         """The glacierEventData key is only visible for s3:ObjectRestore:Completed events."""
-        item = self.get("glacierEventData")
-        return None if item is None else S3EventRecordGlacierEventData(item)
+        pass
 
     @property
     def intelligent_tiering_event_data(self) -> S3EventRecordIntelligentTieringEventData | None:
         """The intelligentTieringEventData key is only visible for IntelligentTiering events."""
-        item = self.get("intelligentTieringEventData")
-        return None if item is None else S3EventRecordIntelligentTieringEventData(item)
+        pass
 
 
 class S3Event(DictWrapper):
@@ -331,18 +327,17 @@ class S3Event(DictWrapper):
 
     @property
     def records(self) -> Iterator[S3EventRecord]:
-        for record in self["Records"]:
-            yield S3EventRecord(record)
+        pass
 
     @property
     def record(self) -> S3EventRecord:
         """Get the first s3 event record"""
-        return next(self.records)
+        pass
 
     @property
     def bucket_name(self) -> str:
         """Get the bucket name for the first s3 event record"""
-        return self["Records"][0]["s3"]["bucket"]["name"]
+        pass
 
     @property
     def object_key(self) -> str:
@@ -351,7 +346,4 @@ class S3Event(DictWrapper):
         Note: IntelligentTiering events use 'get_object' as the key name,
         while other S3 events use 'object'. This method handles both cases.
         """
-        s3_data = self["Records"][0]["s3"]
-        # IntelligentTiering events use 'get_object', others use 'object'
-        object_data = s3_data.get("get_object") or s3_data["object"]
-        return unquote_plus(object_data["key"])
+        pass

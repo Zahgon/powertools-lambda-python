@@ -91,27 +91,4 @@ def _validate_source_ip(value):
     Validates the IP part while preserving the original format.
     See: https://github.com/aws-powertools/powertools-lambda-python/issues/7288
     """
-
-    if value == "test-invoke-source-ip":
-        return value
-
-    try:
-        # The value is always an instance of str before Pydantic validation occurs.
-        # So the first thing to do is try to convert it.
-        IPvAnyNetwork(value)  # ty: ignore[call-non-callable]
-    except ValueError:
-        try:
-            # Handle IPv6 with port: [IPv6]:port
-            if value.startswith("[") and "]:" in value:
-                ip_part = value.split("]:")[0][1:]  # Remove "[" and get IP part
-            elif ":" in value and value.count(":") <= 1:
-                ip_part = value.split(":")[0]
-            else:
-                # If it"s not in IP:port format, validate as-is
-                ip_part = value
-
-            IPvAnyNetwork(ip_part)  # ty: ignore[call-non-callable]
-        except (ValueError, IndexError) as e:
-            raise ValueError(f"Invalid IP address in sourceIp: {ip_part}") from e
-
-    return value
+    pass

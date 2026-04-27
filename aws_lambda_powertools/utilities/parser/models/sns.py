@@ -115,14 +115,7 @@ class SnsNotificationModel(BaseModel):
 
     @model_validator(mode="before")
     def check_sqs_protocol(cls, values):
-        sqs_rewritten_keys = ("UnsubscribeURL", "SigningCertURL")
-        if any(key in sqs_rewritten_keys for key in values):
-            # The sentinel value 'None' forces the validator to fail with
-            # ValidatorError instead of KeyError when the key is missing from
-            # the SQS payload
-            values["UnsubscribeUrl"] = values.pop("UnsubscribeURL", None)
-            values["SigningCertUrl"] = values.pop("SigningCertURL", None)
-        return values
+        pass
 
 
 class SnsRecordModel(BaseModel):

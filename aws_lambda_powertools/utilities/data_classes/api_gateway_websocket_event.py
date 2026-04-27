@@ -13,77 +13,77 @@ from aws_lambda_powertools.utilities.data_classes.common import (
 class APIGatewayWebSocketEventIdentity(DictWrapper):
     @property
     def source_ip(self) -> str:
-        return self["sourceIp"]
+        pass
 
     @property
     def user_agent(self) -> str | None:
-        return self.get("userAgent")
+        pass
 
 
 class APIGatewayWebSocketEventRequestContext(DictWrapper):
     @property
     def route_key(self) -> str:
-        return self["routeKey"]
+        pass
 
     @property
     def disconnect_status_code(self) -> int | None:
-        return self.get("disconnectStatusCode")
+        pass
 
     @property
     def message_id(self) -> str | None:
-        return self.get("messageId")
+        pass
 
     @property
     def event_type(self) -> str:
-        return self["eventType"]
+        pass
 
     @property
     def extended_request_id(self) -> str:
-        return self["extendedRequestId"]
+        pass
 
     @property
     def request_time(self) -> str:
-        return self["requestTime"]
+        pass
 
     @property
     def message_direction(self) -> str:
-        return self["messageDirection"]
+        pass
 
     @property
     def disconnect_reason(self) -> str | None:
-        return self.get("disconnectReason")
+        pass
 
     @property
     def stage(self) -> str:
-        return self["stage"]
+        pass
 
     @property
     def connected_at(self) -> int:
-        return self["connectedAt"]
+        pass
 
     @property
     def request_time_epoch(self) -> int:
-        return self["requestTimeEpoch"]
+        pass
 
     @property
     def identity(self) -> APIGatewayWebSocketEventIdentity:
-        return APIGatewayWebSocketEventIdentity(self["identity"])
+        pass
 
     @property
     def request_id(self) -> str:
-        return self["requestId"]
+        pass
 
     @property
     def domain_name(self) -> str:
-        return self["domainName"]
+        pass
 
     @property
     def connection_id(self) -> str:
-        return self["connectionId"]
+        pass
 
     @property
     def api_id(self) -> str:
-        return self["apiId"]
+        pass
 
 
 class APIGatewayWebSocketEvent(DictWrapper):
@@ -96,41 +96,36 @@ class APIGatewayWebSocketEvent(DictWrapper):
 
     @property
     def is_base64_encoded(self) -> bool:
-        return self["isBase64Encoded"]
+        pass
 
     @property
     def body(self) -> str | None:
-        return self.get("body")
+        pass
 
     @cached_property
     def decoded_body(self) -> str | None:
-        body = self.body
-        if self.is_base64_encoded and body:
-            return base64.b64decode(body.encode()).decode()
-        return body
+        pass
 
     @cached_property
     def json_body(self) -> Any:
-        if self.decoded_body:
-            return self._json_deserializer(self.decoded_body)
-        return None
+        pass
 
     @property
     def headers(self) -> dict[str, str]:
-        return CaseInsensitiveDict(self.get("headers"))
+        pass
 
     @property
     def multi_value_headers(self) -> dict[str, list[str]]:
-        return CaseInsensitiveDict(self.get("multiValueHeaders"))
+        pass
 
     @property
     def query_string_parameters(self) -> dict[str, str]:
-        return CaseInsensitiveDict(self.get("queryStringParameters"))
+        pass
 
     @property
     def multi_value_query_string_parameters(self) -> dict[str, list[str]]:
-        return CaseInsensitiveDict(self.get("multiValueQueryStringParameters"))
+        pass
 
     @property
     def request_context(self) -> APIGatewayWebSocketEventRequestContext:
-        return APIGatewayWebSocketEventRequestContext(self["requestContext"])
+        pass

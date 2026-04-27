@@ -84,7 +84,7 @@ class TimeValues(Enum):
     @classmethod
     @lru_cache(maxsize=1)
     def days(cls) -> list[str]:
-        return [day.value for day in cls if day.value not in ["START", "END", "TIMEZONE"]]
+        pass
 
 
 class ModuloRangeValues(Enum):
@@ -397,151 +397,48 @@ class ConditionsValidator(BaseValidator):
 
     @staticmethod
     def _validate_schedule_between_days_of_week_key(key: str, rule_name: str):
-        if key != TimeKeys.CURRENT_DAY_OF_WEEK.value:
-            raise SchemaValidationError(
-                f"'condition with a 'SCHEDULE_BETWEEN_DAYS_OF_WEEK' action must have a 'CURRENT_DAY_OF_WEEK' condition key, rule={rule_name}",  # noqa: E501
-            )
+        pass
 
     @staticmethod
     def _validate_schedule_between_days_of_week_value(value: dict, rule_name: str):
-        error_str = f"condition with a CURRENT_DAY_OF_WEEK action must have a condition value dictionary with 'DAYS' and 'TIMEZONE' (optional) keys, rule={rule_name}"  # noqa: E501
-        if not isinstance(value, dict):
-            raise SchemaValidationError(error_str)
-
-        days = value.get(TimeValues.DAYS.value)
-        if not isinstance(days, list) or not value:
-            raise SchemaValidationError(error_str)
-
-        valid_days = TimeValues.days()
-        for day in days:
-            if not isinstance(day, str) or day not in valid_days:
-                raise SchemaValidationError(
-                    f"condition value DAYS must represent a day of the week in 'TimeValues' enum, rule={rule_name}",
-                )
-
-        ConditionsValidator._validate_timezone(timezone=value.get(TimeValues.TIMEZONE.value), rule=rule_name)
+        pass
 
     @staticmethod
     def _validate_schedule_between_time_range_key(key: str, rule_name: str):
-        if key != TimeKeys.CURRENT_TIME.value:
-            raise SchemaValidationError(
-                f"'condition with a 'SCHEDULE_BETWEEN_TIME_RANGE' action must have a 'CURRENT_TIME' condition key, rule={rule_name}",  # noqa: E501
-            )
+        pass
 
     @staticmethod
     def _validate_schedule_between_time_range_value(value: dict, rule_name: str):
-        if not isinstance(value, dict):
-            raise SchemaValidationError(
-                f"{RuleAction.SCHEDULE_BETWEEN_TIME_RANGE.value} action must have a dictionary with 'START' and 'END' keys, rule={rule_name}",  # noqa: E501
-            )
-
-        start_time = value.get(TimeValues.START.value, "")
-        end_time = value.get(TimeValues.END.value, "")
-
-        if not isinstance(start_time, str) or not isinstance(end_time, str):
-            raise SchemaValidationError(f"'START' and 'END' must be a non empty string, rule={rule_name}")
-
-        # Using a regex instead of strptime because it's several orders of magnitude faster
-        if not TIME_RANGE_PATTERN.match(start_time) or not TIME_RANGE_PATTERN.match(end_time):
-            raise SchemaValidationError(
-                f"'START' and 'END' must be a valid time format, time_format={TIME_RANGE_FORMAT}, rule={rule_name}",
-            )
-
-        ConditionsValidator._validate_timezone(timezone=value.get(TimeValues.TIMEZONE.value), rule=rule_name)
+        pass
 
     @staticmethod
     def _validate_schedule_between_datetime_range_key(key: str, rule_name: str):
-        if key != TimeKeys.CURRENT_DATETIME.value:
-            raise SchemaValidationError(
-                f"'condition with a 'SCHEDULE_BETWEEN_DATETIME_RANGE' action must have a 'CURRENT_DATETIME' condition key, rule={rule_name}",  # noqa: E501
-            )
+        pass
 
     @staticmethod
     def _validate_schedule_between_datetime_range_value(value: dict, rule_name: str):
-        if not isinstance(value, dict):
-            raise SchemaValidationError(
-                f"{RuleAction.SCHEDULE_BETWEEN_DATETIME_RANGE.value} action must have a dictionary with 'START' and 'END' keys, rule={rule_name}",  # noqa: E501
-            )
-
-        start_time = value.get(TimeValues.START.value, "")
-        end_time = value.get(TimeValues.END.value, "")
-
-        if not isinstance(start_time, str) or not isinstance(end_time, str):
-            raise SchemaValidationError(f"'START' and 'END' must be a non empty string, rule={rule_name}")
-
-        ConditionsValidator._validate_datetime(start_time, rule_name)
-        ConditionsValidator._validate_datetime(end_time, rule_name)
-        ConditionsValidator._validate_timezone(timezone=value.get(TimeValues.TIMEZONE.value), rule=rule_name)
+        pass
 
     @staticmethod
     def _validate_modulo_range_value(value: dict, rule_name: str):
-        error_str = f"condition with a 'MODULO_RANGE' action must have a condition value type dictionary with 'BASE', 'START' and 'END' keys, rule={rule_name}"  # noqa: E501
-        if not isinstance(value, dict):
-            raise SchemaValidationError(error_str)
-
-        base = value.get(ModuloRangeValues.BASE.value)
-        start = value.get(ModuloRangeValues.START.value)
-        end = value.get(ModuloRangeValues.END.value)
-
-        if base is None or start is None or end is None:
-            raise SchemaValidationError(error_str)
-
-        if not isinstance(base, int) or not isinstance(start, int) or not isinstance(end, int):
-            raise SchemaValidationError(f"'BASE', 'START' and 'END' must be integers, rule={rule_name}")
-
-        if not 0 <= start <= end <= base - 1:
-            raise SchemaValidationError(
-                f"condition with 'MODULO_RANGE' action must satisfy 0 <= START <= END <= BASE-1, rule={rule_name}",
-            )
+        pass
 
     @staticmethod
     def _validate_all_in_value_value(value: list, rule_name: str):
-        if not (isinstance(value, list)):
-            raise SchemaValidationError(f"ALL_IN_VALUE action must have a list value, rule={rule_name}")
+        pass
 
     @staticmethod
     def _validate_any_in_value_value(value: list, rule_name: str):
-        if not (isinstance(value, list)):
-            raise SchemaValidationError(f"ANY_IN_VALUE action must have a list value, rule={rule_name}")
+        pass
 
     @staticmethod
     def _validate_none_in_value_value(value: list, rule_name: str):
-        if not (isinstance(value, list)):
-            raise SchemaValidationError(f"NONE_IN_VALUE action must have a list value, rule={rule_name}")
+        pass
 
     @staticmethod
     def _validate_datetime(datetime_str: str, rule_name: str):
-        date = None
-
-        # We try to parse first with timezone information in order to return the correct error messages
-        # when a timestamp with timezone is used. Otherwise, the user would get the first error "must be a valid
-        # ISO8601 time format" which is misleading
-
-        try:
-            # python < 3.11 don't support the Z timezone on datetime.fromisoformat,
-            # so we replace any Z with the equivalent "+00:00"
-            # datetime.fromisoformat is orders of magnitude faster than datetime.strptime
-            date = datetime.fromisoformat(datetime_str.replace("Z", "+00:00"))
-        except Exception:
-            raise SchemaValidationError(f"'START' and 'END' must be a valid ISO8601 time format, rule={rule_name}")
-
-        # we only allow timezone information to be set via the TIMEZONE field
-        # this way we can encode DST into the calculation. For instance, Copenhagen is
-        # UTC+2 during winter, and UTC+1 during summer, which would be impossible to define
-        # using a single ISO datetime string
-        if date.tzinfo is not None:
-            raise SchemaValidationError(
-                "'START' and 'END' must not include timezone information. Set the timezone using the 'TIMEZONE' "
-                f"field, rule={rule_name} ",
-            )
+        pass
 
     @staticmethod
     def _validate_timezone(rule: str, timezone: str | None = None):
-        timezone = timezone or "UTC"
-
-        if not isinstance(timezone, str):
-            raise SchemaValidationError(f"'TIMEZONE' must be a string, rule={str}")
-
-        # try to see if the timezone string corresponds to any known timezone
-        if not tz.gettz(timezone):
-            raise SchemaValidationError(f"'TIMEZONE' value must represent a valid IANA timezone, rule={rule}")
+        pass

@@ -5,9 +5,9 @@ class CodeDeployLifecycleHookEvent(DictWrapper):
     @property
     def deployment_id(self) -> str:
         """The unique ID of the calling CodeDeploy Deployment."""
-        return self["DeploymentId"]
+        pass
 
     @property
     def lifecycle_event_hook_execution_id(self) -> str:
         """The unique ID of a deployments lifecycle hook."""
-        return self["LifecycleEventHookExecutionId"]
+        pass

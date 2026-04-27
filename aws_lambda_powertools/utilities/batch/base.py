@@ -295,96 +295,39 @@ class BasePartialBatchProcessor(BasePartialProcessor):  # noqa
         """
         Remove results from previous execution.
         """
-        self.success_messages.clear()
-        self.fail_messages.clear()
-        self.exceptions.clear()
-        self.batch_response = copy.deepcopy(self.DEFAULT_RESPONSE)
+        pass
 
     def _clean(self):
         """
         Report messages to be deleted in case of partial failure.
         """
-
-        if not self._has_messages_to_report():
-            return
-
-        if self._entire_batch_failed() and self.raise_on_entire_batch_failure:
-            raise BatchProcessingError(
-                msg=f"All records failed processing. {len(self.exceptions)} individual errors logged separately below.",
-                child_exceptions=self.exceptions,
-            )
-
-        messages = self._get_messages_to_report()
-        self.batch_response = {"batchItemFailures": messages}
+        pass
 
     def _has_messages_to_report(self) -> bool:
-        if self.fail_messages:
-            return True
-
-        logger.debug(f"All {len(self.success_messages)} records successfully processed")
-        return False
+        pass
 
     def _entire_batch_failed(self) -> bool:
-        return len(self.exceptions) == len(self.records)
+        pass
 
     def _get_messages_to_report(self) -> list[PartialItemFailures]:
         """
         Format messages to use in batch deletion
         """
-        return self._COLLECTOR_MAPPING[self.event_type]()
+        pass
 
     # Event Source Data Classes follow python idioms for fields
     # while Parser/Pydantic follows the event field names to the latter
     def _collect_sqs_failures(self):
-        failures = []
-        for msg in self.fail_messages:
-            # If a message failed due to model validation (e.g., poison pill)
-            # we convert to an event source data class...but self.model is still true
-            # therefore, we do an additional check on whether the failed message is still a model
-            # see https://github.com/aws-powertools/powertools-lambda-python/issues/2091
-            if self.model and getattr(msg, "model_validate", None):
-                msg_id = msg.messageId
-            else:
-                msg_id = msg.message_id
-            failures.append({"itemIdentifier": msg_id})
-        return failures
+        pass
 
     def _collect_kinesis_failures(self):
-        failures = []
-        for msg in self.fail_messages:
-            # # see https://github.com/aws-powertools/powertools-lambda-python/issues/2091
-            if self.model and getattr(msg, "model_validate", None):
-                msg_id = msg.kinesis.sequenceNumber
-            else:
-                msg_id = msg.kinesis.sequence_number
-            failures.append({"itemIdentifier": msg_id})
-        return failures
+        pass
 
     def _collect_dynamodb_failures(self):
-        failures = []
-        for msg in self.fail_messages:
-            # see https://github.com/aws-powertools/powertools-lambda-python/issues/2091
-            if self.model and getattr(msg, "model_validate", None):
-                msg_id = msg.dynamodb.SequenceNumber
-            else:
-                msg_id = msg.dynamodb.sequence_number
-            failures.append({"itemIdentifier": msg_id})
-        return failures
+        pass
 
     def _collect_kafka_failures(self):
-        failures = []
-        for msg in self.fail_messages:
-            # Kafka uses a composite identifier with partition and offset
-            # Both data class and Pydantic model use the same field names
-            failures.append(
-                {
-                    "itemIdentifier": {
-                        "partition": f"{msg.topic}-{msg.partition}",
-                        "offset": msg.offset,
-                    },
-                },
-            )
-        return failures
+        pass
 
     @overload
     def _to_batch_type(

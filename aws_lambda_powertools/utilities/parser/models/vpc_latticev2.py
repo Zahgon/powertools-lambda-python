@@ -100,7 +100,7 @@ class VpcLatticeV2RequestContext(BaseModel):
 
     @field_validator("time_epoch_as_datetime", mode="before")
     def time_epoch_convert_to_miliseconds(cls, value: int):
-        return round(int(value) / 1000)
+        pass
 
 
 class VpcLatticeV2Model(BaseModel):

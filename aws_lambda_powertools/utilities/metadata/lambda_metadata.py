@@ -172,4 +172,4 @@ def clear_metadata_cache() -> None:
     Useful for testing or when you need to force a fresh fetch
     (e.g. after SnapStart restore).
     """
-    _cache.clear()
+    pass

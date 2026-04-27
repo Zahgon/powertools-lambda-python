@@ -66,7 +66,7 @@ class DataRecord:
         bool
             Whether the record is currently expired or not
         """
-        return bool(self.expiry_timestamp and int(datetime.datetime.now().timestamp()) > self.expiry_timestamp)
+        pass
 
     @property
     def status(self) -> str:
@@ -77,14 +77,7 @@ class DataRecord:
         -------
         str
         """
-        if self.is_expired:
-            return STATUS_CONSTANTS["EXPIRED"]
-        if self._status in STATUS_CONSTANTS.values():
-            return self._status
-
-        from aws_lambda_powertools.utilities.idempotency.exceptions import IdempotencyInvalidStatusError
-
-        raise IdempotencyInvalidStatusError(self._status)
+        pass
 
     def response_json_as_dict(self) -> dict | None:
         """
@@ -114,6 +107,4 @@ class DataRecord:
         The returned datetime object is timezone-naive and assumes the timestamp
         is in the system's local timezone. Lambda default timezone is UTC.
         """
-        if self.expiry_timestamp:
-            return datetime.datetime.fromtimestamp(int(self.expiry_timestamp))
-        return None
+        pass

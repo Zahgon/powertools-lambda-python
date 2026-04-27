@@ -201,8 +201,7 @@ class Metrics:
         self.default_dimensions.update(**dimensions)
 
     def clear_default_dimensions(self) -> None:
-        self.provider.default_dimensions.clear()
-        self.default_dimensions.clear()
+        pass
 
     def clear_metrics(self) -> None:
         self.provider.clear_metrics()
@@ -213,19 +212,19 @@ class Metrics:
     # To access these attributes on the provider instance.
     @property
     def namespace(self):
-        return self.provider.namespace
+        pass
 
     @namespace.setter
     def namespace(self, namespace):
-        self.provider.namespace = namespace
+        pass
 
     @property
     def service(self):
-        return self.provider.service
+        pass
 
     @service.setter
     def service(self, service):
-        self.provider.service = service
+        pass
 
 
 # Maintenance: until v3, we can't afford to break customers.

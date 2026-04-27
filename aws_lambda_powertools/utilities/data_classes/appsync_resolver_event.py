@@ -14,16 +14,7 @@ from aws_lambda_powertools.warnings import PowertoolsDeprecationWarning
 
 def get_identity_object(identity: dict | None) -> Any:
     """Get the identity object based on the best detected type"""
-    # API_KEY authorization
-    if identity is None:
-        return None
-
-    # AMAZON_COGNITO_USER_POOLS authorization
-    if "sub" in identity:
-        return AppSyncIdentityCognito(identity)
-
-    # AWS_IAM authorization
-    return AppSyncIdentityIAM(identity)
+    pass
 
 
 class AppSyncEventBase(DictWrapper):
@@ -32,18 +23,17 @@ class AppSyncEventBase(DictWrapper):
     @property
     def request_headers(self) -> dict[str, str]:
         """Request headers"""
-        return CaseInsensitiveDict(self["request"]["headers"])
+        pass
 
     @property
     def domain_name(self) -> str | None:
         """The domain name when using custom domain"""
-        return self["request"].get("domainName")
+        pass
 
     @property
     def prev_result(self) -> dict[str, Any] | None:
         """It represents the result of whatever previous operation was executed in a pipeline resolver."""
-        prev = self.get("prev")
-        return prev.get("result") if prev else None
+        pass
 
     @property
     def stash(self) -> dict:
@@ -51,7 +41,7 @@ class AppSyncEventBase(DictWrapper):
         The same stash instance lives through a single resolver execution. This means that you can use the
         stash to pass arbitrary data across request and response mapping templates, and across functions in
         a pipeline resolver."""
-        return self.get("stash") or {}
+        pass
 
     @property
     def identity(self) -> AppSyncIdentityIAM | AppSyncIdentityCognito | None:
@@ -63,7 +53,7 @@ class AppSyncEventBase(DictWrapper):
         - AWS_LAMBDA authorization - returns None - NEED TO TEST
         - OPENID_CONNECT authorization - returns None - NEED TO TEST
         """
-        return get_identity_object(self.get("identity"))
+        pass
 
 
 class AppSyncIdentityIAM(DictWrapper):
@@ -72,43 +62,43 @@ class AppSyncIdentityIAM(DictWrapper):
     @property
     def source_ip(self) -> list[str]:
         """The source IP address of the caller received by AWS AppSync."""
-        return self["sourceIp"]
+        pass
 
     @property
     def username(self) -> str:
         """The username of the authenticated user. IAM user principal"""
-        return self["username"]
+        pass
 
     @property
     def account_id(self) -> str:
         """The AWS account ID of the caller."""
-        return self["accountId"]
+        pass
 
     @property
     def cognito_identity_pool_id(self) -> str:
         """The Amazon Cognito identity pool ID associated with the caller."""
-        return self["cognitoIdentityPoolId"]
+        pass
 
     @property
     def cognito_identity_id(self) -> str:
         """The Amazon Cognito identity ID of the caller."""
-        return self["cognitoIdentityId"]
+        pass
 
     @property
     def user_arn(self) -> str:
         """The ARN of the IAM user."""
-        return self["userArn"]
+        pass
 
     @property
     def cognito_identity_auth_type(self) -> str:
         """Either authenticated or unauthenticated based on the identity type."""
-        return self["cognitoIdentityAuthType"]
+        pass
 
     @property
     def cognito_identity_auth_provider(self) -> str:
         """A comma separated list of external identity provider information used in obtaining the
         credentials used to sign the request."""
-        return self["cognitoIdentityAuthProvider"]
+        pass
 
 
 class AppSyncIdentityCognito(DictWrapper):
@@ -117,12 +107,12 @@ class AppSyncIdentityCognito(DictWrapper):
     @property
     def source_ip(self) -> list[str]:
         """The source IP address of the caller received by AWS AppSync."""
-        return self["sourceIp"]
+        pass
 
     @property
     def username(self) -> str:
         """The username of the authenticated user."""
-        return self["username"]
+        pass
 
     @property
     def sub(self) -> str:
@@ -132,22 +122,22 @@ class AppSyncIdentityCognito(DictWrapper):
     @property
     def claims(self) -> dict[str, str]:
         """The claims that the user has."""
-        return self["claims"]
+        pass
 
     @property
     def default_auth_strategy(self) -> str:
         """The default authorization strategy for this caller (ALLOW or DENY)."""
-        return self["defaultAuthStrategy"]
+        pass
 
     @property
     def groups(self) -> list[str]:
         """List of OIDC groups"""
-        return self["groups"]
+        pass
 
     @property
     def issuer(self) -> str:
         """The token issuer."""
-        return self["issuer"]
+        pass
 
 
 class AppSyncResolverEventInfo(DictWrapper):
@@ -156,29 +146,29 @@ class AppSyncResolverEventInfo(DictWrapper):
     @property
     def field_name(self) -> str:
         """The name of the field that is currently being resolved."""
-        return self["fieldName"]
+        pass
 
     @property
     def parent_type_name(self) -> str:
         """The name of the parent type for the field that is currently being resolved."""
-        return self["parentTypeName"]
+        pass
 
     @property
     def variables(self) -> dict[str, str]:
         """A map which holds all variables that are passed into the GraphQL request."""
-        return self.get("variables") or {}
+        pass
 
     @property
     def selection_set_list(self) -> list[str]:
         """A list representation of the fields in the GraphQL selection set. Fields that are aliased will
         only be referenced by the alias name, not the field name."""
-        return self.get("selectionSetList") or []
+        pass
 
     @property
     def selection_set_graphql(self) -> str | None:
         """A string representation of the selection set, formatted as GraphQL schema definition language (SDL).
         Although fragments are not be merged into the selection set, inline fragments are preserved."""
-        return self.get("selectionSetGraphQL")
+        pass
 
 
 class AppSyncResolverEvent(AppSyncEventBase):
@@ -206,22 +196,22 @@ class AppSyncResolverEvent(AppSyncEventBase):
     @property
     def type_name(self) -> str:
         """The name of the parent type for the field that is currently being resolved."""
-        return self.info.parent_type_name
+        pass
 
     @property
     def field_name(self) -> str:
         """The name of the field that is currently being resolved."""
-        return self.info.field_name
+        pass
 
     @property
     def arguments(self) -> dict[str, Any]:
         """A map that contains all GraphQL arguments for this field."""
-        return self["arguments"]
+        pass
 
     @property
     def source(self) -> dict[str, Any]:
         """A map that contains the resolution of the parent field."""
-        return self.get("source") or {}
+        pass
 
     @property
     def info(self) -> AppSyncResolverEventInfo:
@@ -268,11 +258,4 @@ class AppSyncResolverEvent(AppSyncEventBase):
         str, optional
             Header value
         """
-        warnings.warn(
-            "The `get_header_value` function is deprecated in V3 and the `case_sensitive` parameter "
-            "no longer has any effect. This function will be removed in the next major version. "
-            "Instead, access headers directly using event.headers.get('HeaderName'), which is case insensitive.",
-            category=PowertoolsDeprecationWarning,
-            stacklevel=2,
-        )
-        return get_header_value(self.request_headers, name, default_value, case_sensitive)  # ty: ignore[deprecated]
+        pass

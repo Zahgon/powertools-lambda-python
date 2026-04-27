@@ -39,14 +39,7 @@ def wrap_middleware_async(middleware: Callable, next_handler: Callable) -> Calla
         An async callable ``(app) -> Response`` that executes *middleware*
         followed by *next_handler*.
     """
-
-    async def wrapped(app: ApiGatewayResolver) -> Response:
-        if inspect.iscoroutinefunction(middleware):
-            return await middleware(app, next_handler)
-
-        return await _run_sync_middleware_in_thread(middleware, next_handler, app)
-
-    return wrapped
+    pass
 
 
 async def _run_sync_middleware_in_thread(
@@ -65,49 +58,7 @@ async def _run_sync_middleware_in_thread(
     Meanwhile the async side awaits *next_handler*, feeds the response back,
     and waits for the thread to finish.
     """
-    middleware_called_next = asyncio.Event()
-    next_app_holder: list = []
-    real_response_holder: list = []
-    middleware_result_holder: list = []
-    middleware_error_holder: list = []
-
-    def sync_next(app: Any) -> Any:
-        next_app_holder.append(app)
-        middleware_called_next.set()
-        # Block this thread until the async handler resolves
-        event = threading.Event()
-        next_app_holder.append(event)
-        event.wait()
-        return real_response_holder[0]
-
-    def run_middleware() -> None:
-        try:
-            result = middleware(app, sync_next)
-            middleware_result_holder.append(result)
-        except Exception as e:
-            middleware_error_holder.append(e)
-
-    thread = threading.Thread(target=run_middleware, daemon=True)
-    thread.start()
-
-    # Wait for the middleware to call next()
-    await middleware_called_next.wait()
-
-    # Resolve the async next_handler on the event-loop
-    real_response = await next_handler(next_app_holder[0])
-    real_response_holder.append(real_response)
-
-    # Unblock the middleware thread
-    threading_event = next_app_holder[1]
-    threading_event.set()
-
-    # Wait for the middleware thread to complete post-processing
-    thread.join()
-
-    if middleware_error_holder:
-        raise middleware_error_holder[0]
-
-    return middleware_result_holder[0]
+    pass
 
 
 class AsyncMiddlewareFrame:
@@ -154,8 +105,7 @@ class AsyncMiddlewareFrame:
         loop = asyncio.get_running_loop()
 
         def sync_next(app: ApiGatewayResolver) -> Any:
-            future = asyncio.run_coroutine_threadsafe(self.next_middleware(app), loop)
-            return future.result()
+            pass
 
         return await asyncio.to_thread(self.current_middleware, app, sync_next)
 
@@ -186,32 +136,4 @@ async def _registered_api_adapter_async(
     Response
         The API Response Object
     """
-    route_args: dict = app.context.get("_route_args", {})
-    logger.debug(f"Calling API Route Handler: {route_args}")
-
-    route = app.context.get("_route")
-    if route is not None:
-        if not route.request_param_name_checked:
-            from aws_lambda_powertools.event_handler.api_gateway import _find_request_param_name
-
-            route.request_param_name = _find_request_param_name(next_middleware)
-            route.request_param_name_checked = True
-        if route.request_param_name:
-            route_args = {**route_args, route.request_param_name: app.request}
-
-        if route.has_dependencies:
-            from aws_lambda_powertools.event_handler.depends import build_dependency_tree, solve_dependencies
-
-            dep_values = solve_dependencies(
-                dependant=build_dependency_tree(route.func),
-                request=app.request,
-                dependency_overrides=app.dependency_overrides or None,
-            )
-            route_args.update(dep_values)
-
-    # Call handler — detect if result is a coroutine and await it
-    result = next_middleware(**route_args)
-    if inspect.iscoroutine(result):
-        result = await result
-
-    return app._to_response(result)
+    pass

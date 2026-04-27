@@ -14,33 +14,33 @@ class ActiveMQMessage(DictWrapper):
     @property
     def message_id(self) -> str:
         """Unique identifier for the message"""
-        return self["messageID"]
+        pass
 
     @property
     def message_type(self) -> str:
-        return self["messageType"]
+        pass
 
     @property
     def data(self) -> str:
-        return self["data"]
+        pass
 
     @property
     def decoded_data(self) -> str:
         """Decodes the data as a str"""
-        return base64_decode(self.data)
+        pass
 
     @cached_property
     def json_data(self) -> Any:
-        return self._json_deserializer(self.decoded_data)
+        pass
 
     @property
     def connection_id(self) -> str:
-        return self["connectionId"]
+        pass
 
     @property
     def redelivered(self) -> bool:
         """true if the message is being resent to the consumer"""
-        return self["redelivered"]
+        pass
 
     @property
     def timestamp(self) -> int:
@@ -50,46 +50,46 @@ class ActiveMQMessage(DictWrapper):
     @property
     def broker_in_time(self) -> int:
         """Time stamp (in milliseconds) for when the message arrived at the broker."""
-        return self["brokerInTime"]
+        pass
 
     @property
     def broker_out_time(self) -> int:
         """Time stamp (in milliseconds) for when the message left the broker."""
-        return self["brokerOutTime"]
+        pass
 
     @property
     def properties(self) -> dict:
         """Custom properties"""
-        return self["properties"]
+        pass
 
     @property
     def destination_physicalname(self) -> str:
-        return self["destination"]["physicalName"]
+        pass
 
     @property
     def delivery_mode(self) -> int | None:
         """persistent or non-persistent delivery"""
-        return self.get("deliveryMode")
+        pass
 
     @property
     def correlation_id(self) -> str | None:
         """User defined correlation id"""
-        return self.get("correlationID")
+        pass
 
     @property
     def reply_to(self) -> str | None:
         """User defined reply to"""
-        return self.get("replyTo")
+        pass
 
     @property
     def get_type(self) -> str | None:
         """User defined message type"""
-        return self.get("type")
+        pass
 
     @property
     def expiration(self) -> int | None:
         """Expiration attribute whose value is given in milliseconds"""
-        return self.get("expiration")
+        pass
 
     @property
     def priority(self) -> int | None:
@@ -103,7 +103,7 @@ class ActiveMQMessage(DictWrapper):
         of messages; however, it should do its best to deliver expedited messages
         ahead of normal messages.
         """
-        return self.get("priority")
+        pass
 
 
 class ActiveMQEvent(DictWrapper):
@@ -126,12 +126,11 @@ class ActiveMQEvent(DictWrapper):
     @property
     def event_source_arn(self) -> str:
         """The Amazon Resource Name (ARN) of the event source"""
-        return self["eventSourceArn"]
+        pass
 
     @property
     def messages(self) -> Iterator[ActiveMQMessage]:
-        for record in self["messages"]:
-            yield ActiveMQMessage(record, json_deserializer=self._json_deserializer)
+        pass
 
     @property
     def message(self) -> ActiveMQMessage:
@@ -149,6 +148,4 @@ class ActiveMQEvent(DictWrapper):
             If there are no more records available.
 
         """
-        if self._messages is None:
-            self._messages = self.messages
-        return next(self._messages)
+        pass

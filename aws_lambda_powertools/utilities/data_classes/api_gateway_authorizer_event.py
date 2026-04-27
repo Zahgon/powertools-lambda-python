@@ -47,12 +47,7 @@ class APIGatewayRouteArn:
     def arn(self) -> str:
         """Build an arn from its parts
         eg: arn:aws:execute-api:us-east-1:123456789012:abcdef123/test/GET/request"""
-        base_arn = f"arn:{self.partition}:execute-api:{self.region}:{self.aws_account_id}:{self.api_id}/{self.stage}"
-
-        if not self.is_websocket_authorizer:
-            return f"{base_arn}/{self.http_method}/{self.resource}"
-        else:
-            return f"{base_arn}/{self.resource}"
+        pass
 
 
 def parse_api_gateway_arn(arn: str, is_websocket_authorizer: bool = False) -> APIGatewayRouteArn:
@@ -69,27 +64,7 @@ def parse_api_gateway_arn(arn: str, is_websocket_authorizer: bool = False) -> AP
     -------
     APIGatewayRouteArn
     """
-    arn_parts = arn.split(":")
-    api_gateway_arn_parts = arn_parts[5].split("/")
-
-    if not is_websocket_authorizer:
-        http_method = api_gateway_arn_parts[2]
-        resource = "/".join(api_gateway_arn_parts[3:]) if len(api_gateway_arn_parts) >= 4 else ""
-    else:
-        http_method = None
-        resource = "/".join(api_gateway_arn_parts[2:])
-
-    return APIGatewayRouteArn(
-        partition=arn_parts[1],
-        region=arn_parts[3],
-        aws_account_id=arn_parts[4],
-        api_id=api_gateway_arn_parts[0],
-        stage=api_gateway_arn_parts[1],
-        http_method=http_method,
-        # conditional allow us to handle /path/{proxy+} resources, as their length changes.
-        resource=resource,
-        is_websocket_authorizer=is_websocket_authorizer,
-    )
+    pass
 
 
 class APIGatewayAuthorizerTokenEvent(DictWrapper):
@@ -102,22 +77,22 @@ class APIGatewayAuthorizerTokenEvent(DictWrapper):
 
     @property
     def get_type(self) -> str:
-        return self["type"]
+        pass
 
     @property
     def authorization_token(self) -> str:
-        return self["authorizationToken"]
+        pass
 
     @property
     def method_arn(self) -> str:
         """ARN of the incoming method request and is populated by API Gateway in accordance with the Lambda authorizer
         configuration"""
-        return self["methodArn"]
+        pass
 
     @property
     def parsed_arn(self) -> APIGatewayRouteArn:
         """Convenient property to return a parsed api gateway method arn"""
-        return parse_api_gateway_arn(self.method_arn)
+        pass
 
 
 class APIGatewayAuthorizerRequestEvent(DictWrapper):
@@ -135,23 +110,23 @@ class APIGatewayAuthorizerRequestEvent(DictWrapper):
 
     @property
     def get_type(self) -> str:
-        return self["type"]
+        pass
 
     @property
     def method_arn(self) -> str:
-        return self["methodArn"]
+        pass
 
     @property
     def parsed_arn(self) -> APIGatewayRouteArn:
-        return parse_api_gateway_arn(self.method_arn)
+        pass
 
     @property
     def identity_source(self) -> str:
-        return self["identitySource"]
+        pass
 
     @property
     def authorization_token(self) -> str:
-        return self["authorizationToken"]
+        pass
 
     @property
     def resource(self) -> str:
@@ -159,31 +134,31 @@ class APIGatewayAuthorizerRequestEvent(DictWrapper):
 
     @property
     def path(self) -> str:
-        return self["path"]
+        pass
 
     @property
     def http_method(self) -> str:
-        return self["httpMethod"]
+        pass
 
     @property
     def headers(self) -> dict[str, str]:
-        return CaseInsensitiveDict(self["headers"])
+        pass
 
     @property
     def query_string_parameters(self) -> dict[str, str]:
-        return self["queryStringParameters"]
+        pass
 
     @property
     def path_parameters(self) -> dict[str, str]:
-        return self["pathParameters"]
+        pass
 
     @property
     def stage_variables(self) -> dict[str, str]:
-        return self["stageVariables"]
+        pass
 
     @property
     def request_context(self) -> BaseRequestContext:
-        return BaseRequestContext(self["requestContext"])
+        pass
 
     @overload
     def get_header_value(
@@ -225,14 +200,7 @@ class APIGatewayAuthorizerRequestEvent(DictWrapper):
         str, optional
             Header value
         """
-        warnings.warn(
-            "The `get_header_value` function is deprecated in V3 and the `case_sensitive` parameter "
-            "no longer has any effect. This function will be removed in the next major version. "
-            "Instead, access headers directly using event.headers.get('HeaderName'), which is case insensitive.",
-            category=PowertoolsDeprecationWarning,
-            stacklevel=2,
-        )
-        return get_header_value(self.headers, name, default_value, case_sensitive)  # ty: ignore[deprecated]
+        pass
 
 
 class APIGatewayAuthorizerEventV2(DictWrapper):
@@ -252,19 +220,19 @@ class APIGatewayAuthorizerEventV2(DictWrapper):
     @property
     def get_type(self) -> str:
         """Event type should always be request"""
-        return self["type"]
+        pass
 
     @property
     def route_arn(self) -> str:
         """ARN of the route being called
 
         eg: arn:aws:execute-api:us-east-1:123456789012:abcdef123/test/GET/request"""
-        return self["routeArn"]
+        pass
 
     @property
     def parsed_arn(self) -> APIGatewayRouteArn:
         """Convenient property to return a parsed api gateway route arn"""
-        return parse_api_gateway_arn(self.route_arn)
+        pass
 
     @property
     def identity_source(self) -> list[str]:
@@ -274,47 +242,47 @@ class APIGatewayAuthorizerEventV2(DictWrapper):
         specified request parameters. The identity source can be headers, query string parameters, stage variables,
         and context parameters.
         """
-        return self.get("identitySource") or []
+        pass
 
     @property
     def route_key(self) -> str:
         """The route key for the route. For HTTP APIs, the route key can be either $default,
         or a combination of an HTTP method and resource path, for example, GET /pets."""
-        return self["routeKey"]
+        pass
 
     @property
     def raw_path(self) -> str:
-        return self["rawPath"]
+        pass
 
     @property
     def raw_query_string(self) -> str:
-        return self["rawQueryString"]
+        pass
 
     @property
     def cookies(self) -> list[str]:
         """Cookies"""
-        return self["cookies"]
+        pass
 
     @property
     def headers(self) -> dict[str, str]:
         """Http headers"""
-        return CaseInsensitiveDict(self["headers"])
+        pass
 
     @property
     def query_string_parameters(self) -> dict[str, str]:
-        return self["queryStringParameters"]
+        pass
 
     @property
     def request_context(self) -> BaseRequestContextV2:
-        return BaseRequestContextV2(self["requestContext"])
+        pass
 
     @property
     def path_parameters(self) -> dict[str, str]:
-        return self.get("pathParameters") or {}
+        pass
 
     @property
     def stage_variables(self) -> dict[str, str]:
-        return self.get("stageVariables") or {}
+        pass
 
     @overload
     def get_header_value(self, name: str, default_value: str, case_sensitive: bool = False) -> str: ...
@@ -351,14 +319,7 @@ class APIGatewayAuthorizerEventV2(DictWrapper):
         str, optional
             Header value
         """
-        warnings.warn(
-            "The `get_header_value` function is deprecated in V3 and the `case_sensitive` parameter "
-            "no longer has any effect. This function will be removed in the next major version. "
-            "Instead, access headers directly using event.headers.get('HeaderName'), which is case insensitive.",
-            category=PowertoolsDeprecationWarning,
-            stacklevel=2,
-        )
-        return get_header_value(self.headers, name, default_value, case_sensitive)  # ty: ignore[deprecated]
+        pass
 
 
 class APIGatewayAuthorizerResponseV2:
@@ -505,45 +466,13 @@ class APIGatewayAuthorizerResponse:
         context: dict | None = None,
         usage_identifier_key: str | None = None,
     ) -> APIGatewayAuthorizerResponse:
-        parsed_arn = parse_api_gateway_arn(arn)
-        return APIGatewayAuthorizerResponse(
-            principal_id,
-            parsed_arn.region,
-            parsed_arn.aws_account_id,
-            parsed_arn.api_id,
-            parsed_arn.stage,
-            context,
-            usage_identifier_key,
-        )
+        pass
 
     def _add_route(self, effect: str, http_method: str, resource: str, conditions: list[dict] | None = None):
         """Adds a route to the internal lists of allowed or denied routes. Each object in
         the internal list contains a resource ARN and a condition statement. The condition
         statement can be null."""
-        if http_method != "*" and http_method not in HttpVerb.__members__:
-            allowed_values = [verb.value for verb in HttpVerb]
-            raise ValueError(f"Invalid HTTP verb: '{http_method}'. Use either '{allowed_values}'")
-
-        if not self._resource_pattern.match(resource):
-            raise ValueError(f"Invalid resource path: {resource}. Path should match {self.path_regex}")
-
-        resource_arn = APIGatewayRouteArn(
-            region=self.region,
-            aws_account_id=self.aws_account_id,
-            api_id=self.api_id,
-            stage=self.stage,
-            http_method=http_method,
-            resource=resource,
-            partition=self.partition,
-            is_websocket_authorizer=False,
-        ).arn
-
-        route = {"resourceArn": resource_arn, "conditions": conditions}
-
-        if effect.lower() == "allow":
-            self._allow_routes.append(route)
-        else:  # deny
-            self._deny_routes.append(route)
+        pass
 
     @staticmethod
     def _get_empty_statement(effect: str) -> dict[str, Any]:
@@ -583,7 +512,7 @@ class APIGatewayAuthorizerResponse:
         ----------
         http_method: str
         """
-        self._add_route(effect="Allow", http_method=http_method, resource="*")
+        pass
 
     def deny_all_routes(self, http_method: str = HttpVerb.ALL.value):
         """Adds a '*' allow to the policy to deny access to all methods of an API
@@ -592,8 +521,7 @@ class APIGatewayAuthorizerResponse:
         ----------
         http_method: str
         """
-
-        self._add_route(effect="Deny", http_method=http_method, resource="*")
+        pass
 
     def allow_route(self, http_method: str, resource: str, conditions: list[dict] | None = None):
         """Adds an API Gateway method (Http verb + Resource path) to the list of allowed
@@ -601,7 +529,7 @@ class APIGatewayAuthorizerResponse:
 
         Optionally includes a condition for the policy statement. More on AWS policy
         conditions here: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html#Condition"""
-        self._add_route(effect="Allow", http_method=http_method, resource=resource, conditions=conditions)
+        pass
 
     def deny_route(self, http_method: str, resource: str, conditions: list[dict] | None = None):
         """Adds an API Gateway method (Http verb + Resource path) to the list of denied
@@ -609,7 +537,7 @@ class APIGatewayAuthorizerResponse:
 
         Optionally includes a condition for the policy statement. More on AWS policy
         conditions here: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html#Condition"""
-        self._add_route(effect="Deny", http_method=http_method, resource=resource, conditions=conditions)
+        pass
 
     def asdict(self) -> dict[str, Any]:
         """Generates the policy document based on the internal lists of allowed and denied
@@ -655,16 +583,7 @@ class APIGatewayAuthorizerResponseWebSocket(APIGatewayAuthorizerResponse):
         context: dict | None = None,
         usage_identifier_key: str | None = None,
     ) -> APIGatewayAuthorizerResponseWebSocket:
-        parsed_arn = parse_api_gateway_arn(arn, is_websocket_authorizer=True)
-        return APIGatewayAuthorizerResponseWebSocket(
-            principal_id,
-            parsed_arn.region,
-            parsed_arn.aws_account_id,
-            parsed_arn.api_id,
-            parsed_arn.stage,
-            context,
-            usage_identifier_key,
-        )
+        pass
 
     # Note: we need ignore[override] because we are removing the http_method field
     @override
@@ -672,34 +591,17 @@ class APIGatewayAuthorizerResponseWebSocket(APIGatewayAuthorizerResponse):
         """Adds a route to the internal lists of allowed or denied routes. Each object in
         the internal list contains a resource ARN and a condition statement. The condition
         statement can be null."""
-        resource_arn = APIGatewayRouteArn(
-            region=self.region,
-            aws_account_id=self.aws_account_id,
-            api_id=self.api_id,
-            stage=self.stage,
-            http_method=None,
-            resource=resource,
-            partition=self.partition,
-            is_websocket_authorizer=True,
-        ).arn
-
-        route = {"resourceArn": resource_arn, "conditions": conditions}
-
-        if effect.lower() == "allow":
-            self._allow_routes.append(route)
-        else:  # deny
-            self._deny_routes.append(route)
+        pass
 
     @override
     def allow_all_routes(self, http_method: str = HttpVerb.ALL.value):  # type: ignore[override]  # noqa: ARG002
         """Adds a '*' allow to the policy to authorize access to all methods of an API"""
-        self._add_route(effect="Allow", resource="*")
+        pass
 
     @override
     def deny_all_routes(self, http_method: str = HttpVerb.ALL.value):  # type: ignore[override]  # noqa: ARG002
         """Adds a '*' allow to the policy to deny access to all methods of an API"""
-
-        self._add_route(effect="Deny", resource="*")
+        pass
 
     # Note: we need ignore[override] because we are removing the http_method field
     @override
@@ -728,7 +630,7 @@ class APIGatewayAuthorizerResponseWebSocket(APIGatewayAuthorizerResponse):
         >>> policy = APIGatewayAuthorizerResponseWebSocket(...)
         >>> policy.allow_route("/api/users", [{"StringEquals": {"aws:RequestTag/Environment": "Production"}}])
         """
-        self._add_route(effect="Allow", resource=resource, conditions=conditions)
+        pass
 
     # Note: we need ignore[override] because we are removing the http_method field
     @override
@@ -757,4 +659,4 @@ class APIGatewayAuthorizerResponseWebSocket(APIGatewayAuthorizerResponse):
         >>> policy = APIGatewayAuthorizerResponseWebSocket(...)
         >>> policy.deny_route("/api/users", [{"StringEquals": {"aws:RequestTag/Environment": "Production"}}])
         """
-        self._add_route(effect="Deny", resource=resource, conditions=conditions)
+        pass

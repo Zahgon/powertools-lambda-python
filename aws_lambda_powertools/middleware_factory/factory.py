@@ -107,42 +107,4 @@ def lambda_handler_decorator(decorator: Callable | None = None, trace_execution:
     MiddlewareInvalidArgumentError
         When middleware receives non keyword=arguments
     """
-
-    if decorator is None:
-        return functools.partial(lambda_handler_decorator, trace_execution=trace_execution)
-
-    trace_execution = resolve_truthy_env_var_choice(
-        env=os.getenv(constants.MIDDLEWARE_FACTORY_TRACE_ENV, "false"),
-        choice=trace_execution,
-    )
-
-    @functools.wraps(decorator)
-    def final_decorator(func: Callable | None = None, **kwargs: Any):
-        # If called with kwargs return new func with kwargs
-        if func is None:
-            return functools.partial(final_decorator, **kwargs)
-
-        if not inspect.isfunction(func):
-            # @custom_middleware(True) vs @custom_middleware(log_event=True)
-            raise MiddlewareInvalidArgumentError(
-                f"Only keyword arguments is supported for middlewares: {decorator.__qualname__} received {func}",  # type: ignore # noqa: E501
-            )
-
-        @functools.wraps(func)
-        def wrapper(event, context, **handler_kwargs):
-            try:
-                middleware = functools.partial(decorator, func, event, context, **kwargs, **handler_kwargs)
-                if trace_execution:
-                    tracer = Tracer(auto_patch=False)
-                    with tracer.provider.in_subsegment(name=f"## {decorator.__qualname__}"):
-                        response = middleware()
-                else:
-                    response = middleware()
-                return response
-            except Exception:
-                logger.exception(f"Caught exception in {decorator.__qualname__}")
-                raise
-
-        return wrapper
-
-    return final_decorator
+    pass

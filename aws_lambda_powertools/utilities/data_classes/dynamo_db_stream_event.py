@@ -52,8 +52,7 @@ class StreamRecord(DictWrapper):
     @property
     def approximate_creation_date_time(self) -> int | None:
         """The approximate date and time when the stream record was created, in UNIX epoch time format."""
-        item = self.get("ApproximateCreationDateTime")
-        return None if item is None else int(item)
+        pass
 
     @cached_property
     def keys(self) -> dict[str, Any]:  # type: ignore[override]
@@ -63,29 +62,27 @@ class StreamRecord(DictWrapper):
     @cached_property
     def new_image(self) -> dict[str, Any]:
         """The item in the DynamoDB table as it appeared after it was modified."""
-        return self._deserialize_dynamodb_dict("NewImage")
+        pass
 
     @cached_property
     def old_image(self) -> dict[str, Any]:
         """The item in the DynamoDB table as it appeared before it was modified."""
-        return self._deserialize_dynamodb_dict("OldImage")
+        pass
 
     @property
     def sequence_number(self) -> str | None:
         """The sequence number of the stream record."""
-        return self.get("SequenceNumber")
+        pass
 
     @property
     def size_bytes(self) -> int | None:
         """The size of the stream record, in bytes."""
-        item = self.get("SizeBytes")
-        return None if item is None else int(item)
+        pass
 
     @property
     def stream_view_type(self) -> StreamViewType | None:
         """The type of data from the modified DynamoDB item that was captured in this stream record"""
-        item = self.get("StreamViewType")
-        return None if item is None else StreamViewType[str(item)]
+        pass
 
 
 class DynamoDBRecordEventName(Enum):
@@ -100,24 +97,22 @@ class DynamoDBRecord(DictWrapper):
     @property
     def aws_region(self) -> str | None:
         """The region in which the GetRecords request was received"""
-        return self.get("awsRegion")
+        pass
 
     @property
     def dynamodb(self) -> StreamRecord | None:
         """The main body of the stream record, containing all the DynamoDB-specific dicts."""
-        stream_record = self.get("dynamodb")
-        return None if stream_record is None else StreamRecord(stream_record)
+        pass
 
     @property
     def event_id(self) -> str | None:
         """A globally unique identifier for the event that was recorded in this stream record."""
-        return self.get("eventID")
+        pass
 
     @property
     def event_name(self) -> DynamoDBRecordEventName | None:
         """The type of data modification that was performed on the DynamoDB table"""
-        item = self.get("eventName")
-        return None if item is None else DynamoDBRecordEventName[item]
+        pass
 
     @property
     def event_source(self) -> str | None:
@@ -127,29 +122,29 @@ class DynamoDBRecord(DictWrapper):
     @property
     def event_source_arn(self) -> str | None:
         """The Amazon Resource Name (ARN) of the event source"""
-        return self.get("eventSourceARN")
+        pass
 
     @property
     def event_version(self) -> str | None:
         """The version number of the stream record format."""
-        return self.get("eventVersion")
+        pass
 
     @property
     def user_identity(self) -> dict:
         """Contains details about the type of identity that made the request"""
-        return self.get("userIdentity") or {}
+        pass
 
 
 class DynamoDBStreamWindow(DictWrapper):
     @property
     def start(self) -> str:
         """The time window started"""
-        return self["start"]
+        pass
 
     @property
     def end(self) -> str:
         """The time window will end"""
-        return self["end"]
+        pass
 
 
 class DynamoDBStreamEvent(DictWrapper):
@@ -178,32 +173,28 @@ class DynamoDBStreamEvent(DictWrapper):
 
     @property
     def records(self) -> Iterator[DynamoDBRecord]:
-        for record in self["Records"]:
-            yield DynamoDBRecord(record)
+        pass
 
     @property
     def window(self) -> DynamoDBStreamWindow | None:
-        window = self.get("window")
-        if window:
-            return DynamoDBStreamWindow(window)
-        return window
+        pass
 
     @property
     def state(self) -> dict[str, Any]:
-        return self.get("state") or {}
+        pass
 
     @property
     def shard_id(self) -> str | None:
-        return self.get("shardId")
+        pass
 
     @property
     def event_source_arn(self) -> str | None:
-        return self.get("eventSourceARN")
+        pass
 
     @property
     def is_final_invoke_for_window(self) -> bool | None:
-        return self.get("isFinalInvokeForWindow")
+        pass
 
     @property
     def is_window_terminated_early(self) -> bool | None:
-        return self.get("isWindowTerminatedEarly")
+        pass

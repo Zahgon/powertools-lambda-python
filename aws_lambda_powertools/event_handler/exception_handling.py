@@ -49,16 +49,7 @@ class ExceptionHandlerManager:
         Callable
             A decorator function that registers the exception handler.
         """
-
-        def register_exception_handler(func: Callable):
-            if isinstance(exc_class, list):
-                for exp in exc_class:
-                    self._exception_handlers[exp] = func
-            else:
-                self._exception_handlers[exc_class] = func
-            return func
-
-        return register_exception_handler
+        pass
 
     def lookup_exception_handler(self, exp_type: type) -> Callable | None:
         """
@@ -99,7 +90,7 @@ class ExceptionHandlerManager:
         ...     KeyError: handle_key_error
         ... })
         """
-        self._exception_handlers.update(handlers)
+        pass
 
     def get_registered_handlers(self) -> dict[type[Exception], Callable]:
         """
@@ -109,10 +100,10 @@ class ExceptionHandlerManager:
         Dict[Type[Exception], Callable]
             A dictionary mapping exception types to their handler functions.
         """
-        return self._exception_handlers.copy()
+        pass
 
     def clear_handlers(self) -> None:
         """
         Clears all registered exception handlers.
         """
-        self._exception_handlers.clear()
+        pass

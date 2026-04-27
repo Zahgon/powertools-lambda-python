@@ -29,7 +29,7 @@ class KinesisFirehoseSqsRecord(BaseModel):
     @field_validator("data", mode="before")
     def data_base64_decode(cls, value):
         # Firehose payload is encoded
-        return json.loads(base64_decode(value))
+        pass
 
 
 class KinesisFirehoseSqsModel(BaseModel):

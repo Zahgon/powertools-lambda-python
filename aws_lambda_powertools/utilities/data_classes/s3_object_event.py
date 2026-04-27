@@ -13,19 +13,19 @@ class S3ObjectContext(DictWrapper):
         The URL is signed using the original caller’s identity, and their permissions
         will apply when the URL is used. If there are signed headers in the URL, the
         Lambda function must include these in the call to Amazon S3, except for the Host."""
-        return self["inputS3Url"]
+        pass
 
     @property
     def output_route(self) -> str:
         """A routing token that is added to the S3 Object Lambda URL when the Lambda function
         calls `WriteGetObjectResponse`."""
-        return self["outputRoute"]
+        pass
 
     @property
     def output_token(self) -> str:
         """An opaque token used by S3 Object Lambda to match the WriteGetObjectResponse call
         with the original caller."""
-        return self["outputToken"]
+        pass
 
 
 class S3ObjectConfiguration(DictWrapper):
@@ -35,13 +35,13 @@ class S3ObjectConfiguration(DictWrapper):
     def access_point_arn(self) -> str:
         """The Amazon Resource Name (ARN) of the S3 Object Lambda access point that received
         this request."""
-        return self["accessPointArn"]
+        pass
 
     @property
     def supporting_access_point_arn(self) -> str:
         """The ARN of the supporting access point that is specified in the S3 Object Lambda
         access point configuration."""
-        return self["supportingAccessPointArn"]
+        pass
 
     @property
     def payload(self) -> str:
@@ -49,7 +49,7 @@ class S3ObjectConfiguration(DictWrapper):
 
         S3 Object Lambda treats this as an opaque string, so it might need to be decoded
         before use."""
-        return self["payload"]
+        pass
 
 
 class S3ObjectUserRequest(DictWrapper):
@@ -59,7 +59,7 @@ class S3ObjectUserRequest(DictWrapper):
     def url(self) -> str:
         """The decoded URL of the request as received by S3 Object Lambda, excluding any
         authorization-related query parameters."""
-        return self["url"]
+        pass
 
     @property
     def headers(self) -> dict[str, str]:
@@ -68,34 +68,34 @@ class S3ObjectUserRequest(DictWrapper):
 
         If the same header appears multiple times, their values are combined into a comma-delimited list.
         The case of the original headers is retained in this map."""
-        return CaseInsensitiveDict(self["headers"])
+        pass
 
 
 class S3ObjectSessionIssuer(DictWrapper):
     @property
     def get_type(self) -> str:
         """The source of the temporary security credentials, such as Root, IAMUser, or Role."""
-        return self["type"]
+        pass
 
     @property
     def user_name(self) -> str:
         """The friendly name of the user or role that issued the session."""
-        return self["userName"]
+        pass
 
     @property
     def principal_id(self) -> str:
         """The internal ID of the entity that was used to get credentials."""
-        return self["principalId"]
+        pass
 
     @property
     def arn(self) -> str:
         """The ARN of the source (account, IAM user, or role) that was used to get temporary security credentials."""
-        return self["arn"]
+        pass
 
     @property
     def account_id(self) -> str:
         """The account that owns the entity that was used to get credentials."""
-        return self["accountId"]
+        pass
 
 
 class S3ObjectSessionAttributes(DictWrapper):
@@ -103,13 +103,13 @@ class S3ObjectSessionAttributes(DictWrapper):
     def creation_date(self) -> str:
         """The date and time when the temporary security credentials were issued.
         Represented in ISO 8601 basic notation."""
-        return self["creationDate"]
+        pass
 
     @property
     def mfa_authenticated(self) -> str:
         """The value is true if the root user or IAM user whose credentials were used for the request also was
         authenticated with an MFA device; otherwise, false."""
-        return self["mfaAuthenticated"]
+        pass
 
 
 class S3ObjectSessionContext(DictWrapper):
@@ -117,12 +117,12 @@ class S3ObjectSessionContext(DictWrapper):
     def session_issuer(self) -> S3ObjectSessionIssuer:
         """If the request was made with temporary security credentials, an element that provides information
         about how the credentials were obtained."""
-        return S3ObjectSessionIssuer(self["sessionIssuer"])
+        pass
 
     @property
     def attributes(self) -> S3ObjectSessionAttributes:
         """Session attributes."""
-        return S3ObjectSessionAttributes(self["attributes"])
+        pass
 
 
 class S3ObjectUserIdentity(DictWrapper):
@@ -154,7 +154,7 @@ class S3ObjectUserIdentity(DictWrapper):
           For example, AWS Elastic Beanstalk assumes an IAM role in your account to call other AWS services
           on your behalf.
         """
-        return self["type"]
+        pass
 
     @property
     def account_id(self) -> str:
@@ -162,7 +162,7 @@ class S3ObjectUserIdentity(DictWrapper):
 
         If the request was made with temporary security credentials, this is the account that owns the IAM
         user or role that was used to obtain credentials."""
-        return self["accountId"]
+        pass
 
     @property
     def access_key_id(self) -> str:
@@ -171,12 +171,12 @@ class S3ObjectUserIdentity(DictWrapper):
         If the request was made with temporary security credentials, this is the access key ID of
         the temporary credentials. For security reasons, accessKeyId might not be present, or might
         be displayed as an empty string."""
-        return self["accessKeyId"]
+        pass
 
     @property
     def user_name(self) -> str:
         """The friendly name of the identity that made the call."""
-        return self["userName"]
+        pass
 
     @property
     def principal_id(self) -> str:
@@ -185,24 +185,19 @@ class S3ObjectUserIdentity(DictWrapper):
         For requests made with temporary security credentials, this value includes
         the session name that is passed to the AssumeRole, AssumeRoleWithWebIdentity,
         or GetFederationToken API call."""
-        return self["principalId"]
+        pass
 
     @property
     def arn(self) -> str:
         """The ARN of the principal that made the call.
         The last section of the ARN contains the user or role that made the call."""
-        return self["arn"]
+        pass
 
     @property
     def session_context(self) -> S3ObjectSessionContext | None:
         """If the request was made with temporary security credentials,
         this element provides information about the session that was created for those credentials."""
-        session_context = self.get("sessionContext")
-
-        if session_context is None:
-            return None
-
-        return S3ObjectSessionContext(session_context)
+        pass
 
 
 class S3ObjectLambdaEvent(DictWrapper):
@@ -242,39 +237,39 @@ class S3ObjectLambdaEvent(DictWrapper):
     @property
     def request_id(self) -> str:
         """The Amazon S3 request ID for this request. We recommend that you log this value to help with debugging."""
-        return self["xAmzRequestId"]
+        pass
 
     @property
     def object_context(self) -> S3ObjectContext:
         """The input and output details for connections to Amazon S3 and S3 Object Lambda."""
-        return S3ObjectContext(self["getObjectContext"])
+        pass
 
     @property
     def configuration(self) -> S3ObjectConfiguration:
         """Configuration information about the S3 Object Lambda access point."""
-        return S3ObjectConfiguration(self["configuration"])
+        pass
 
     @property
     def user_request(self) -> S3ObjectUserRequest:
         """Information about the original call to S3 Object Lambda."""
-        return S3ObjectUserRequest(self["userRequest"])
+        pass
 
     @property
     def user_identity(self) -> S3ObjectUserIdentity:
         """Details about the identity that made the call to S3 Object Lambda."""
-        return S3ObjectUserIdentity(self["userIdentity"])
+        pass
 
     @property
     def request_route(self) -> str:
         """A routing token that is added to the S3 Object Lambda URL when the Lambda function
         calls `WriteGetObjectResponse`."""
-        return self.object_context.output_route
+        pass
 
     @property
     def request_token(self) -> str:
         """An opaque token used by S3 Object Lambda to match the WriteGetObjectResponse call
         with the original caller."""
-        return self.object_context.output_token
+        pass
 
     @property
     def input_s3_url(self) -> str:
@@ -298,7 +293,7 @@ class S3ObjectLambdaEvent(DictWrapper):
                 original_object = response.content.decode("utf-8")
                 ...
         """
-        return self.object_context.input_s3_url
+        pass
 
     @property
     def protocol_version(self) -> str:
@@ -310,4 +305,4 @@ class S3ObjectLambdaEvent(DictWrapper):
         fields at any time, at which point you might experience a minor version bump. Due to the nature of
         software rollouts, it is possible that you might see multiple minor versions in use at once.
         """
-        return self["protocolVersion"]
+        pass

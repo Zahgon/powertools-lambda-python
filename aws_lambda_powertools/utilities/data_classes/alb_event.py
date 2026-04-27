@@ -21,7 +21,7 @@ class ALBEventRequestContext(DictWrapper):
     @property
     def elb_target_group_arn(self) -> str:
         """Target group arn for your Lambda function"""
-        return self["elb"]["targetGroupArn"]
+        pass
 
 
 class ALBEvent(BaseProxyEvent):
@@ -40,38 +40,19 @@ class ALBEvent(BaseProxyEvent):
 
     @property
     def request_context(self) -> ALBEventRequestContext:
-        return ALBEventRequestContext(self["requestContext"])
+        pass
 
     @property
     def resolved_query_string_parameters(self) -> dict[str, list[str]]:
-        multi_value = self.multi_value_query_string_parameters
-        single_value = super().resolved_query_string_parameters
-
-        if not multi_value:
-            params = single_value
-        elif not single_value:
-            params = multi_value
-        else:
-            # Merge both: multi_value takes precedence, single_value fills missing keys
-            params = {**single_value, **multi_value}
-
-        if not self.decode_query_parameters:
-            return params
-
-        # Decode the parameter keys and values
-        decoded_params = {}
-        for k, vals in params.items():
-            decoded_params[unquote(k)] = [unquote(v) for v in vals]
-
-        return decoded_params
+        pass
 
     @property
     def multi_value_headers(self) -> dict[str, list[str]]:
-        return CaseInsensitiveDict(self.get("multiValueHeaders"))
+        pass
 
     @property
     def resolved_headers_field(self) -> dict[str, Any]:
-        return self.multi_value_headers or self.headers
+        pass
 
     def header_serializer(self) -> BaseHeadersSerializer:
         # When using the ALB integration, the `multiValueHeaders` feature can be disabled (default) or enabled.

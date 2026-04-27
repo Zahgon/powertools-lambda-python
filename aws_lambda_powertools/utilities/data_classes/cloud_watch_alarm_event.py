@@ -12,14 +12,14 @@ class CloudWatchAlarmState(DictWrapper):
         """
         Overall state of the alarm.
         """
-        return self["value"]
+        pass
 
     @property
     def reason(self) -> str:
         """
         Reason why alarm was changed to this state.
         """
-        return self["reason"]
+        pass
 
     @property
     def reason_data(self) -> str:
@@ -27,15 +27,14 @@ class CloudWatchAlarmState(DictWrapper):
         Additional data to back up the reason, usually contains the evaluated data points,
         the calculated threshold and timestamps.
         """
-        return self["reasonData"]
+        pass
 
     @cached_property
     def reason_data_decoded(self) -> Any | None:
         """
         Deserialized version of reason_data.
         """
-
-        return self._json_deserializer(self.reason_data) if self.reason_data else None
+        pass
 
     @property
     def actions_suppressed_by(self) -> Literal["Alarm", "ExtensionPeriod", "WaitPeriod"] | None:
@@ -43,14 +42,14 @@ class CloudWatchAlarmState(DictWrapper):
         Describes why the actions when the value is `ALARM` are suppressed in a composite
         alarm.
         """
-        return self.get("actionsSuppressedBy", None)
+        pass
 
     @property
     def actions_suppressed_reason(self) -> str | None:
         """
         Captures the reason for action suppression.
         """
-        return self.get("actionsSuppressedReason", None)
+        pass
 
     @property
     def timestamp(self) -> str:
@@ -66,32 +65,32 @@ class CloudWatchAlarmMetric(DictWrapper):
         """
         Unique ID of the alarm metric.
         """
-        return self["id"]
+        pass
 
     @property
     def expression(self) -> str | None:
         """
         Optional expression of the alarm metric.
         """
-        return self.get("expression", None)
+        pass
 
     @property
     def label(self) -> str | None:
         """
         Optional label of the alarm metric.
         """
-        return self.get("label", None)
+        pass
 
     @property
     def return_data(self) -> bool:
         """
         Whether this metric data is used to determine the state of the alarm or not.
         """
-        return self["returnData"]
+        pass
 
     @property
     def metric_stat(self) -> CloudWatchAlarmMetricStat:
-        return CloudWatchAlarmMetricStat(self["metricStat"])
+        pass
 
 
 class CloudWatchAlarmMetricStat(DictWrapper):
@@ -100,28 +99,28 @@ class CloudWatchAlarmMetricStat(DictWrapper):
         """
         Metric evaluation period, in seconds.
         """
-        return self.get("period", None)
+        pass
 
     @property
     def stat(self) -> str | None:
         """
         Statistical aggregation of metric points, e.g. Average, SampleCount, etc.
         """
-        return self.get("stat", None)
+        pass
 
     @property
     def unit(self) -> str | None:
         """
         Unit for metric.
         """
-        return self.get("unit", None)
+        pass
 
     @property
     def metric(self) -> dict:
         """
         Metric details
         """
-        return self.get("metric") or {}
+        pass
 
 
 class CloudWatchAlarmData(DictWrapper):
@@ -130,28 +129,28 @@ class CloudWatchAlarmData(DictWrapper):
         """
         Alarm name.
         """
-        return self["alarmName"]
+        pass
 
     @property
     def state(self) -> CloudWatchAlarmState:
         """
         The current state of the Alarm.
         """
-        return CloudWatchAlarmState(self["state"])
+        pass
 
     @property
     def previous_state(self) -> CloudWatchAlarmState:
         """
         The previous state of the Alarm.
         """
-        return CloudWatchAlarmState(self["previousState"])
+        pass
 
     @property
     def configuration(self) -> CloudWatchAlarmConfiguration:
         """
         The configuration of the Alarm.
         """
-        return CloudWatchAlarmConfiguration(self["configuration"])
+        pass
 
 
 class CloudWatchAlarmConfiguration(DictWrapper):
@@ -160,43 +159,42 @@ class CloudWatchAlarmConfiguration(DictWrapper):
         """
         Optional description for the Alarm.
         """
-        return self.get("description", None)
+        pass
 
     @property
     def alarm_rule(self) -> str | None:
         """
         Optional description for the Alarm rule in case of composite alarm.
         """
-        return self.get("alarmRule", None)
+        pass
 
     @property
     def alarm_actions_suppressor(self) -> str | None:
         """
         Optional action suppression for the Alarm rule in case of composite alarm.
         """
-        return self.get("actionsSuppressor", None)
+        pass
 
     @property
     def alarm_actions_suppressor_wait_period(self) -> str | None:
         """
         Optional action suppression wait period for the Alarm rule in case of composite alarm.
         """
-        return self.get("actionsSuppressorWaitPeriod", None)
+        pass
 
     @property
     def alarm_actions_suppressor_extension_period(self) -> str | None:
         """
         Optional action suppression extension period for the Alarm rule in case of composite alarm.
         """
-        return self.get("actionsSuppressorExtensionPeriod", None)
+        pass
 
     @property
     def metrics(self) -> list[CloudWatchAlarmMetric]:
         """
         The metrics evaluated for the Alarm.
         """
-        metrics = self.get("metrics") or []
-        return [CloudWatchAlarmMetric(i) for i in metrics]
+        pass
 
 
 class CloudWatchAlarmEvent(DictWrapper):
@@ -205,28 +203,28 @@ class CloudWatchAlarmEvent(DictWrapper):
         """
         Source of the triggered event.
         """
-        return self["source"]
+        pass
 
     @property
     def alarm_arn(self) -> str:
         """
         The ARN of the CloudWatch Alarm.
         """
-        return self["alarmArn"]
+        pass
 
     @property
     def region(self) -> str:
         """
         The AWS region in which the Alarm is active.
         """
-        return self["region"]
+        pass
 
     @property
     def source_account_id(self) -> str:
         """
         The AWS Account ID that the Alarm is deployed to.
         """
-        return self["accountId"]
+        pass
 
     @property
     def timestamp(self) -> str:
@@ -240,4 +238,4 @@ class CloudWatchAlarmEvent(DictWrapper):
         """
         Contains basic data about the Alarm and its current and previous states.
         """
-        return CloudWatchAlarmData(self["alarmData"])
+        pass

@@ -164,26 +164,7 @@ class BedrockAgentFunctionResolver:
         Callable
             Decorator function that registers and returns the original function
         """
-
-        def decorator(func: T) -> T:
-            function_name = name or func.__name__
-
-            logger.debug(f"Registering {function_name} tool")
-
-            if function_name in self._tools:
-                warnings.warn(
-                    f"Tool '{function_name}' already registered. Overwriting with new definition.",
-                    PowertoolsUserWarning,
-                    stacklevel=2,
-                )
-
-            self._tools[function_name] = {
-                "function": func,
-                "description": description,
-            }
-            return func
-
-        return decorator
+        pass
 
     def resolve(self, event: dict[str, Any], context: Any) -> dict[str, Any]:
         """Resolves the function call from Bedrock Agent event"""

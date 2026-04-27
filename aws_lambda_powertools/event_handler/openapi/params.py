@@ -473,15 +473,11 @@ class Header(Param):  # type: ignore[misc]
 
     @property
     def alias(self):
-        return self._alias
+        pass
 
     @alias.setter
     def alias(self, value: str | None = None):
-        if value is not None:
-            # Headers are case-insensitive according to RFC 7540 (HTTP/2), so we lower the parameter name
-            # This ensures that customers can access headers with any casing, as per the RFC guidelines.
-            # Reference: https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2
-            self._alias = value.lower()
+        pass
 
 
 class Cookie(Param):  # type: ignore[misc]
@@ -704,9 +700,7 @@ class UploadFile:
 
     @classmethod
     def _validate(cls, v: Any) -> UploadFile:
-        if isinstance(v, cls):
-            return v
-        raise ValueError(f"Expected UploadFile, got {type(v).__name__}")
+        pass
 
     @classmethod
     def __get_pydantic_json_schema__(cls, _schema: Any, handler: Any) -> dict[str, Any]:
@@ -870,39 +864,7 @@ def analyze_param(
     ModelField | None
         The type annotation and the Pydantic field representing the parameter
     """
-    field_info, type_annotation = get_field_info_and_type_annotation(
-        annotation,
-        value,
-        is_path_param,
-        is_response_param,
-    )
-
-    # If the value is a FieldInfo, we use it as the FieldInfo for the parameter
-    if isinstance(value, FieldInfo):
-        if field_info is not None:
-            raise AssertionError("Cannot use a FieldInfo as a parameter annotation and pass a FieldInfo as a value")
-        field_info = value
-
-        field_info.annotation = type_annotation  # type: ignore[attr-defined,unused-ignore]
-
-    # If we didn't determine the FieldInfo yet, we create a default one
-    if field_info is None:
-        default_value = value if value is not inspect.Signature.empty else Required
-
-        # Check if the parameter is part of the path. Otherwise, defaults to query.
-        if is_path_param:
-            field_info = Path(annotation=type_annotation)
-        elif not field_annotation_is_scalar(annotation=type_annotation):
-            field_info = Body(annotation=type_annotation, default=default_value)
-        else:
-            field_info = Query(annotation=type_annotation, default=default_value)
-
-    # When we have a response field, we need to set the default value to Required
-    if is_response_param:
-        field_info.default = Required
-
-    field = _create_model_field(field_info, type_annotation, param_name, is_path_param)
-    return field
+    pass
 
 
 def get_field_info_and_type_annotation(
@@ -914,48 +876,21 @@ def get_field_info_and_type_annotation(
     """
     Get the FieldInfo and type annotation from an annotation and value.
     """
-    field_info: FieldInfo | None = None
-    type_annotation: Any = Any
-
-    if annotation is not inspect.Signature.empty:
-        # If the annotation is an Annotated type, we need to extract the type annotation and the FieldInfo
-        if get_origin(annotation) is Annotated:
-            field_info, type_annotation = get_field_info_annotated_type(annotation, value, is_path_param)
-        # If the annotation is a Response type, we recursively call this function with the inner type
-        elif get_origin(annotation) is Response:
-            field_info, type_annotation = get_field_info_response_type(annotation, value)
-        # If the response param is a tuple with two elements, we use the first element as the type annotation,
-        # just like we did in the APIGateway._to_response
-        elif is_response_param and get_origin(annotation) is tuple and len(get_args(annotation)) == 2:
-            field_info, type_annotation = get_field_info_tuple_type(annotation, value)
-        # If the annotation is not an Annotated type, we use it as the type annotation
-        else:
-            type_annotation = annotation
-
-    return field_info, type_annotation
+    pass
 
 
 def get_field_info_tuple_type(annotation, value) -> tuple[FieldInfo | None, Any]:
-    (inner_type, _) = get_args(annotation)
-
-    # If the inner type is an Annotated type, we need to extract the type annotation and the FieldInfo
-    if get_origin(inner_type) is Annotated:
-        return get_field_info_annotated_type(inner_type, value, False)
-
-    return None, inner_type
+    pass
 
 
 def get_field_info_response_type(annotation, value) -> tuple[FieldInfo | None, Any]:
     # Example: get_args(Response[inner_type]) == (inner_type,)  # noqa: ERA001
-    (inner_type,) = get_args(annotation)
-
-    # Recursively resolve the inner type
-    return get_field_info_and_type_annotation(inner_type, value, False, True)
+    pass
 
 
 def _has_discriminator(field_info: FieldInfo) -> bool:
     """Check if a FieldInfo has a discriminator."""
-    return hasattr(field_info, "discriminator") and field_info.discriminator is not None
+    pass
 
 
 def _handle_discriminator_with_param(
@@ -968,20 +903,7 @@ def _handle_discriminator_with_param(
     Returns:
         tuple of (powertools_annotation, type_annotation, has_discriminator_with_body)
     """
-    field_obj = None
-    body_obj = None
-
-    for ann in annotations:
-        if isinstance(ann, Body):
-            body_obj = ann
-        elif _has_discriminator(ann):
-            field_obj = ann
-
-    if field_obj and body_obj:
-        # Use Body as the primary annotation, preserve full annotation for validation
-        return body_obj, annotation, True
-
-    raise AssertionError("Only one FieldInfo can be used per parameter")
+    pass
 
 
 def _create_field_info(
@@ -990,87 +912,19 @@ def _create_field_info(
     has_discriminator_with_body: bool,
 ) -> FieldInfo:
     """Create or copy FieldInfo based on the annotation type."""
-    field_info: FieldInfo
-    if has_discriminator_with_body:
-        # For discriminator + Body case, create a new Body instance directly
-        field_info = Body()
-        field_info.annotation = type_annotation
-    else:
-        # Copy field_info because we mutate field_info.default later
-        field_info = copy_field_info(
-            field_info=powertools_annotation,
-            annotation=type_annotation,
-        )
-    return field_info
+    pass
 
 
 def _set_field_default(field_info: FieldInfo, value: Any, is_path_param: bool) -> None:
     """Set the default value for a field."""
-    if field_info.default not in [Undefined, Required]:
-        raise AssertionError("FieldInfo needs to have a default value of Undefined or Required")
-
-    if value is not inspect.Signature.empty:
-        if is_path_param:
-            raise AssertionError("Cannot use a FieldInfo as a path parameter and pass a value")
-        field_info.default = value
-    else:
-        field_info.default = Required
+    pass
 
 
 def get_field_info_annotated_type(annotation, value, is_path_param: bool) -> tuple[FieldInfo | None, Any]:
     """
     Get the FieldInfo and type annotation from an Annotated type.
     """
-    annotated_args = get_args(annotation)
-    type_annotation = annotated_args[0]
-
-    # Handle both FieldInfo instances and FieldInfo subclasses (e.g., Body vs Body())
-    powertools_annotations: list[FieldInfo] = []
-    for arg in annotated_args[1:]:
-        if isinstance(arg, FieldInfo):
-            powertools_annotations.append(arg)
-        elif isinstance(arg, type) and issubclass(arg, FieldInfo):
-            # If it's a class (e.g., Body instead of Body()), instantiate it
-            powertools_annotations.append(arg())
-
-    # Preserve non-FieldInfo metadata (like annotated_types constraints)
-    # This is important for constraints like Interval, Gt, Lt, etc.
-    other_metadata = [
-        arg
-        for arg in annotated_args[1:]
-        if not isinstance(arg, FieldInfo) and not (isinstance(arg, type) and issubclass(arg, FieldInfo))
-    ]
-
-    # Determine which annotation to use
-    powertools_annotation: FieldInfo | None = None
-    has_discriminator_with_param = False
-
-    if len(powertools_annotations) == 2:
-        powertools_annotation, type_annotation, has_discriminator_with_param = _handle_discriminator_with_param(
-            powertools_annotations,
-            annotation,
-        )
-    elif len(powertools_annotations) > 1:
-        raise AssertionError("Only one FieldInfo can be used per parameter")
-    else:
-        powertools_annotation = next(iter(powertools_annotations), None)
-
-    # Reconstruct type_annotation with non-FieldInfo metadata if present
-    # This ensures constraints like Interval are preserved
-    if other_metadata and not has_discriminator_with_param:
-        type_annotation = Annotated[(type_annotation, *other_metadata)]
-
-    # Process the annotation if it exists
-    field_info: FieldInfo | None = None
-    if isinstance(powertools_annotation, FieldInfo):  # pragma: no cover
-        field_info = _create_field_info(powertools_annotation, type_annotation, has_discriminator_with_param)
-        _set_field_default(field_info, value, is_path_param)
-
-        # Preserve full annotated type for discriminated unions
-        if _has_discriminator(powertools_annotation):  # pragma: no cover
-            type_annotation = annotation  # pragma: no cover
-
-    return field_info, type_annotation
+    pass
 
 
 def create_response_field(
@@ -1086,15 +940,7 @@ def create_response_field(
     """
     Create a new response field. Raises if type_ is invalid.
     """
-    field_info = field_info or FieldInfo(
-        annotation=type_,
-        default=default,
-        alias=alias,
-    )
-
-    kwargs = {"name": name, "field_info": field_info, "mode": mode}
-
-    return ModelField(**kwargs)  # type: ignore[arg-type]
+    pass
 
 
 def _apply_header_underscore_conversion(
@@ -1110,27 +956,7 @@ def _apply_header_underscore_conversion(
     with dash-case conversion since HTTP headers should use dash-case.
     For all Header fields: Sets the parameter alias if convert_underscores is True
     """
-    if not isinstance(field_info, Header) or not field_info.convert_underscores:
-        return field_info, type_annotation
-
-    # Always set the parameter alias for Header fields (if not already set)
-    if not field_info.alias:
-        field_info.alias = param_name.replace("_", "-")
-
-    # Handle BaseModel case - create new model with dash-case alias generator
-    if lenient_issubclass(type_annotation, BaseModel):
-        # For HTTP headers, we should use dash-case regardless of existing alias generator
-        # This ensures consistent header naming conventions
-        header_aliased_model = create_model(
-            f"{type_annotation.__name__}WithHeaderAliases",
-            __base__=type_annotation,
-            __config__={"alias_generator": lambda name: name.replace("_", "-")},
-        )
-
-        type_annotation = header_aliased_model
-        field_info.annotation = type_annotation
-
-    return field_info, type_annotation
+    pass
 
 
 def _create_model_field(
@@ -1142,26 +968,4 @@ def _create_model_field(
     """
     Create a new ModelField from a FieldInfo and type annotation.
     """
-    if field_info is None:
-        return None
-
-    if is_path_param:
-        if not isinstance(field_info, Path):
-            raise AssertionError("Path parameters must be of type Path")
-    elif isinstance(field_info, Param) and getattr(field_info, "in_", None) is None:
-        field_info.in_ = ParamTypes.query
-
-    # Apply header underscore conversion
-    field_info, type_annotation = _apply_header_underscore_conversion(field_info, type_annotation, param_name)
-
-    # If the field_info is a Param, we use the `in_` attribute to determine the type annotation
-    use_annotation = get_annotation_from_field_info(type_annotation, field_info, param_name)
-
-    return create_response_field(
-        name=param_name,
-        type_=use_annotation,
-        default=field_info.default,
-        alias=field_info.alias,
-        required=field_info.default in (Required, Undefined),
-        field_info=field_info,
-    )
+    pass

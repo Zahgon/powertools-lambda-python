@@ -27,18 +27,15 @@ logger = logging.getLogger(__name__)
 class PowertoolsFunctions(Functions):
     @signature({"types": ["string"]})
     def _func_powertools_json(self, value):
-        return json.loads(value)
+        pass
 
     @signature({"types": ["string"]})
     def _func_powertools_base64(self, value):
-        return base64.b64decode(value).decode()
+        pass
 
     @signature({"types": ["string"]})
     def _func_powertools_base64_gzip(self, value):
-        encoded = base64.b64decode(value)
-        uncompressed = gzip.decompress(encoded)
-
-        return uncompressed.decode()
+        pass
 
 
 def query(data: dict | str, envelope: str, jmespath_options: dict | None = None) -> Any:
@@ -95,11 +92,4 @@ def extract_data_from_envelope(data: dict | str, envelope: str, jmespath_options
 
     *Deprecated*: Use query instead
     """
-    warnings.warn(
-        "The extract_data_from_envelope method is deprecated in V3 "
-        "and will be removed in the next major version. Use query instead.",
-        category=PowertoolsDeprecationWarning,
-        stacklevel=2,
-    )
-
-    return query(data=data, envelope=envelope, jmespath_options=jmespath_options)
+    pass

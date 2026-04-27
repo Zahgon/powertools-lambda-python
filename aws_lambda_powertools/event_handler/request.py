@@ -100,32 +100,32 @@ class Request:
         ``/applications/<application_id>``, the value is
         ``{"application_id": "4da715ee"}``.
         """
-        return self._path_parameters
+        pass
 
     @property
     def method(self) -> str:
         """HTTP method in upper-case, e.g. ``"GET"``, ``"PUT"``."""
-        return self._current_event.http_method.upper()
+        pass
 
     @property
     def headers(self) -> dict[str, str]:
         """Request headers dict (lower-cased keys may vary by event source)."""
-        return self._current_event.headers or {}
+        pass
 
     @property
     def query_parameters(self) -> dict[str, str] | None:
         """Query string parameters, or ``None`` when none are present."""
-        return self._current_event.query_string_parameters
+        pass
 
     @property
     def body(self) -> str | None:
         """Raw request body string, or ``None`` when the request has no body."""
-        return self._current_event.body
+        pass
 
     @property
     def json_body(self) -> Any:
         """Request body deserialized as a Python object (dict / list), or ``None``."""
-        return self._current_event.json_body
+        pass
 
     @property
     def resolved_event(self) -> BaseProxyEvent:
@@ -148,7 +148,7 @@ class Request:
             }
         ```
         """
-        return self._current_event
+        pass
 
     @property
     def context(self) -> dict[str, Any]:
@@ -167,4 +167,4 @@ class Request:
             return request.context["user"]
         ```
         """
-        return self._context
+        pass

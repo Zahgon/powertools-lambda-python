@@ -204,15 +204,7 @@ class BaseProvider(ABC):
 
         @functools.wraps(lambda_handler)
         def decorate(event, context, *args, **kwargs):
-            try:
-                response = lambda_handler(event, context, *args, **kwargs)
-                if capture_cold_start_metric:
-                    unwrapped_context = context.lambda_context if is_durable_context(context) else context
-                    self._add_cold_start_metric(context=unwrapped_context)
-            finally:
-                self.flush_metrics(raise_on_empty_metrics=raise_on_empty_metrics)
-
-            return response
+            pass
 
         return decorate
 
@@ -235,5 +227,4 @@ class BaseProvider(ABC):
 
 
 def reset_cold_start_flag_provider():
-    if not cold_start.is_cold_start:
-        cold_start.is_cold_start = True
+    pass

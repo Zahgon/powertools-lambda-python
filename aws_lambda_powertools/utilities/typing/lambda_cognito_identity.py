@@ -7,9 +7,9 @@ class LambdaCognitoIdentity:
     @property
     def cognito_identity_id(self) -> str:
         """The authenticated Amazon Cognito identity."""
-        return self._cognito_identity_id
+        pass
 
     @property
     def cognito_identity_pool_id(self) -> str:
         """The Amazon Cognito identity pool that authorized the invocation."""
-        return self._cognito_identity_pool_id
+        pass

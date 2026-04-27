@@ -346,23 +346,7 @@ class SSMProvider(BaseProvider):
         PutParameterResultTypeDef
             The dict returned by boto3.
         """
-        opts = {
-            "Name": name,
-            "Value": value,
-            "Overwrite": overwrite,
-            "Type": parameter_type,
-            "Tier": tier,
-            "Description": description,
-            **sdk_options,
-        }
-
-        if kms_key_id:
-            opts["KeyId"] = kms_key_id
-
-        try:
-            return self.client.put_parameter(**opts)
-        except Exception as exc:
-            raise SetParameterError(f"Error setting parameter - {str(exc)}") from exc
+        pass
 
     def _get(self, name: str, decrypt: bool = False, **sdk_options) -> str:
         """
@@ -1055,23 +1039,7 @@ def set_parameter(
     PutParameterResultTypeDef
         The dict returned by boto3.
     """
-
-    # Only create the provider if this function is called at least once
-    if "ssm" not in DEFAULT_PROVIDERS:
-        DEFAULT_PROVIDERS["ssm"] = SSMProvider()
-
-    provider: SSMProvider = DEFAULT_PROVIDERS["ssm"]
-
-    return provider.set(  # ty: ignore[no-matching-overload]
-        name,
-        value,
-        parameter_type=parameter_type,  # type: ignore[arg-type]
-        overwrite=overwrite,
-        tier=tier,
-        description=description,
-        kms_key_id=kms_key_id,  # type: ignore[arg-type]
-        **sdk_options,
-    )
+    pass
 
 
 @overload

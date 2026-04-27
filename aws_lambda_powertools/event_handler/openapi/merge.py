@@ -49,62 +49,17 @@ RESOLVER_CLASSES = frozenset(
 
 def _is_resolver_call(node: ast.expr) -> bool:
     """Check if an AST node is a call to a resolver class."""
-    if not isinstance(node, ast.Call):
-        return False
-    func = node.func
-    if isinstance(func, ast.Name) and func.id in RESOLVER_CLASSES:
-        return True
-    if isinstance(func, ast.Attribute) and func.attr in RESOLVER_CLASSES:
-        return True
-    return False
+    pass
 
 
 def _file_has_resolver(file_path: Path, resolver_name: str) -> bool:
     """Check if a Python file contains a resolver instance using AST."""
-    try:
-        source = file_path.read_text(encoding="utf-8")
-        tree = ast.parse(source, filename=str(file_path))
-    except (SyntaxError, UnicodeDecodeError):
-        return False
-
-    for node in ast.walk(tree):
-        targets: list[ast.expr] = []
-        value: ast.expr | None = None
-        if isinstance(node, ast.Assign):
-            targets = node.targets
-            value = node.value
-        elif isinstance(node, ast.AnnAssign):
-            targets = [node.target]
-            value = node.value
-        for target in targets:
-            if isinstance(target, ast.Name) and target.id == resolver_name:
-                if value is not None and _is_resolver_call(value):
-                    return True
-    return False
+    pass
 
 
 def _file_imports_resolver(file_path: Path, resolver_file: Path, resolver_name: str, root: Path) -> bool:
     """Check if a Python file imports the resolver from the resolver file."""
-    try:
-        source = file_path.read_text(encoding="utf-8")
-        tree = ast.parse(source, filename=str(file_path))
-    except (SyntaxError, UnicodeDecodeError):
-        return False
-
-    # Get the module path of the resolver file relative to root
-    # e.g., "service/handlers/utils/rest_api_resolver.py" -> "service.handlers.utils.rest_api_resolver"
-    resolver_relative = resolver_file.relative_to(root).with_suffix("")
-    resolver_module = ".".join(resolver_relative.parts)
-
-    for node in ast.walk(tree):
-        # Check "from X import app" or "from X import app as something"
-        if isinstance(node, ast.ImportFrom) and node.module:
-            for alias in node.names:
-                if alias.name == resolver_name:
-                    # Check if the import module matches the resolver module
-                    if node.module == resolver_module:
-                        return True
-    return False
+    pass
 
 
 def _find_dependent_files(
@@ -129,44 +84,17 @@ def _find_dependent_files(
     project_root : Path
         Root directory for resolving Python imports.
     """
-    dependent_files: list[Path] = []
-
-    for file_path in search_path.rglob("*.py"):
-        if file_path == resolver_file:
-            continue
-        if _is_excluded(file_path, search_path, exclude):
-            continue
-        if _file_imports_resolver(file_path, resolver_file, resolver_name, project_root):
-            dependent_files.append(file_path)
-
-    return sorted(dependent_files)
+    pass
 
 
 def _is_excluded(file_path: Path, root: Path, exclude_patterns: list[str]) -> bool:
     """Check if a file matches any exclusion pattern."""
-    relative_str = str(file_path.relative_to(root))
-
-    for pattern in exclude_patterns:
-        if pattern.startswith("**/"):
-            sub_pattern = pattern[3:]
-            if fnmatch.fnmatch(relative_str, pattern) or fnmatch.fnmatch(file_path.name, sub_pattern):
-                return True
-            clean_pattern = sub_pattern.replace("/**", "").replace("/*", "")
-            for part in file_path.relative_to(root).parts:
-                if fnmatch.fnmatch(part, clean_pattern):
-                    return True
-        elif fnmatch.fnmatch(relative_str, pattern) or fnmatch.fnmatch(file_path.name, pattern):
-            return True
-    return False
+    pass
 
 
 def _get_glob_pattern(pat: str, recursive: bool) -> str:
     """Get the glob pattern based on recursive flag."""
-    if recursive and not pat.startswith("**/"):
-        return f"**/{pat}"
-    if not recursive and pat.startswith("**/"):
-        return pat[3:]
-    return pat
+    pass
 
 
 def _discover_resolver_files(
@@ -177,24 +105,7 @@ def _discover_resolver_files(
     recursive: bool = False,
 ) -> list[Path]:
     """Discover Python files containing resolver instances."""
-    root = Path(path).resolve()
-    if not root.exists():
-        raise FileNotFoundError(f"Path does not exist: {root}")
-
-    patterns = [pattern] if isinstance(pattern, str) else pattern
-    found_files: set[Path] = set()
-
-    for pat in patterns:
-        glob_pattern = _get_glob_pattern(pat, recursive)
-        for file_path in root.glob(glob_pattern):
-            if (
-                file_path.is_file()
-                and not _is_excluded(file_path, root, exclude)
-                and _file_has_resolver(file_path, resolver_name)
-            ):
-                found_files.add(file_path)
-
-    return sorted(found_files)
+    pass
 
 
 def _load_module(file_path: Path, module_name: str) -> Any:
@@ -352,21 +263,7 @@ class OpenAPIMerge:
             This is needed when handlers import the resolver using absolute imports like
             'from service.handlers.utils.resolver import app'.
         """
-        exclude = exclude or ["**/tests/**", "**/__pycache__/**", "**/.venv/**"]
-        self._exclude = exclude
-        self._resolver_name = resolver_name
-        self._search_path = Path(path).resolve()
-        self._root = Path(project_root).resolve() if project_root else self._search_path
-
-        self._discovered_files = _discover_resolver_files(path, pattern, exclude, resolver_name, recursive)
-
-        # For each resolver file, find files that import it (search within path, resolve imports with project_root)
-        for resolver_file in self._discovered_files:
-            dependent = _find_dependent_files(self._search_path, resolver_file, resolver_name, exclude, self._root)
-            self._dependent_files[resolver_file] = dependent
-            logger.debug(f"Found {len(dependent)} dependent files for {resolver_file}")
-
-        return self._discovered_files
+        pass
 
     def add_file(self, file_path: str | Path, resolver_name: str | None = None) -> None:
         """Add a specific file to be included in the merge.
@@ -374,11 +271,7 @@ class OpenAPIMerge:
         Note: Must be called before get_openapi_schema(). Adding files after
         schema generation will not affect the cached result.
         """
-        path = Path(file_path).resolve()
-        if path not in self._discovered_files:
-            self._discovered_files.append(path)
-        if resolver_name:
-            self._resolver_name = resolver_name
+        pass
 
     def add_schema(self, schema: dict[str, Any]) -> None:
         """Add a pre-generated OpenAPI schema to be merged.
@@ -386,17 +279,17 @@ class OpenAPIMerge:
         Note: Must be called before get_openapi_schema(). Adding schemas after
         schema generation will not affect the cached result.
         """
-        self._schemas.append(_model_to_dict(schema))
+        pass
 
     @property
     def discovered_files(self) -> list[Path]:
         """Get the list of discovered resolver files."""
-        return self._discovered_files.copy()
+        pass
 
     @property
     def dependent_files(self) -> dict[Path, list[Path]]:
         """Get the mapping of resolver files to their dependent handler files."""
-        return {k: v.copy() for k, v in self._dependent_files.items()}
+        pass
 
     def get_openapi_schema(self) -> dict[str, Any]:
         """Generate the merged OpenAPI schema."""

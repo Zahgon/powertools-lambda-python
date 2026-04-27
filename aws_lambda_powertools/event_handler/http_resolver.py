@@ -116,24 +116,7 @@ class HttpProxyEvent(BaseProxyEvent):
         HttpProxyEvent
             Event object compatible with Powertools resolvers
         """
-        # Extract headers from ASGI format [(b"key", b"value"), ...]
-        headers: dict[str, str] = {}
-        for key, value in scope.get("headers", []):
-            header_name = key.decode("utf-8").lower()
-            header_value = value.decode("utf-8")
-            # Handle duplicate headers by joining with comma
-            if header_name in headers:
-                headers[header_name] = f"{headers[header_name]}, {header_value}"
-            else:
-                headers[header_name] = header_value
-
-        return cls(
-            method=scope["method"],
-            path=scope["path"],
-            headers=headers,
-            body=body,
-            query_string=scope.get("query_string", b"").decode("utf-8"),
-        )
+        pass
 
     def header_serializer(self) -> BaseHeadersSerializer:
         """Return the HTTP headers serializer."""
@@ -142,12 +125,12 @@ class HttpProxyEvent(BaseProxyEvent):
     @property
     def resolved_query_string_parameters(self) -> dict[str, list[str]]:
         """Return query parameters in the format expected by OpenAPI validation."""
-        return self.multi_value_query_string_parameters
+        pass
 
     @property
     def resolved_headers_field(self) -> dict[str, str]:
         """Return headers in the format expected by OpenAPI validation."""
-        return self.headers
+        pass
 
 
 class MockLambdaContext:
@@ -241,113 +224,19 @@ class HttpResolverLocal(ApiGatewayResolver):
 
     async def _resolve_async(self) -> dict:  # type: ignore[override]
         """Async version of resolve that supports async handlers."""
-        method = self.current_event.http_method.upper()
-        path = self._remove_prefix(self.current_event.path)
-
-        registered_routes = self._static_routes + self._dynamic_routes
-
-        for route in registered_routes:
-            if method != route.method:
-                continue
-            match_results = route.rule.match(path)
-            if match_results:
-                self.append_context(_route=route, _path=path)
-                route_keys = self._convert_matches_into_route_keys(match_results)
-                return await self._call_route_async(route, route_keys)
-
-        # Handle not found
-        return await self._handle_not_found_async()
+        pass
 
     async def _call_route_async(self, route: Route, route_arguments: dict[str, str]) -> dict:  # type: ignore[override]
         """Call route handler, supporting both sync and async handlers."""
-        from aws_lambda_powertools.event_handler.api_gateway import ResponseBuilder
-
-        try:
-            self._reset_processed_stack()
-
-            # Get the route args (may be modified by validation middleware)
-            self.append_context(_route_args=route_arguments)
-
-            # Run middleware chain (sync for now, handlers can be async)
-            response = await self._run_middleware_chain_async(route)
-
-            response_builder: ResponseBuilder = ResponseBuilder(
-                response=response,
-                serializer=self._serializer,
-                route=route,
-            )
-
-            return response_builder.build(self.current_event, self._cors)
-
-        except Exception as exc:
-            exc_response_builder = self._call_exception_handler(exc, route)
-            if exc_response_builder:
-                return exc_response_builder.build(self.current_event, self._cors)
-            raise
+        pass
 
     async def _run_middleware_chain_async(self, route: Route) -> Response:
         """Run the middleware chain, awaiting async handlers."""
-        # Build middleware list
-        all_middlewares: list[Callable[..., Any]] = []
-
-        # Determine if validation should be enabled for this route
-        # If route has explicit enable_validation setting, use it; otherwise, use resolver's global setting
-        route_validation_enabled = (
-            route.enable_validation if route.enable_validation is not None else self._enable_validation
-        )
-
-        if route_validation_enabled and hasattr(self, "_request_validation_middleware"):
-            all_middlewares.append(self._request_validation_middleware)
-
-        all_middlewares.extend(self._router_middlewares + route.middlewares)
-
-        if route_validation_enabled and hasattr(self, "_response_validation_middleware"):
-            all_middlewares.append(self._response_validation_middleware)
-
-        # Create the final handler that calls the route function
-        async def final_handler(app):
-            route_args = app.context.get("_route_args", {})
-            result = route.func(**route_args)
-
-            # Await if coroutine
-            if inspect.iscoroutine(result):
-                result = await result
-
-            return self._to_response(result)
-
-        # Build middleware chain from end to start
-        next_handler = final_handler
-
-        for middleware in reversed(all_middlewares):
-            next_handler = wrap_middleware_async(middleware, next_handler)
-
-        return await next_handler(self)
+        pass
 
     async def _handle_not_found_async(self, method: str = "", path: str = "") -> dict:  # type: ignore[override]
         """Handle 404 responses, using custom not_found handler if registered."""
-        from http import HTTPStatus
-
-        from aws_lambda_powertools.event_handler.api_gateway import ResponseBuilder
-        from aws_lambda_powertools.event_handler.exceptions import NotFoundError
-
-        # Check for custom not_found handler
-        custom_not_found_handler = self.exception_handler_manager.lookup_exception_handler(NotFoundError)
-        if custom_not_found_handler:
-            response = custom_not_found_handler(NotFoundError())
-        else:
-            response = Response(
-                status_code=HTTPStatus.NOT_FOUND.value,
-                content_type="application/json",
-                body={"statusCode": HTTPStatus.NOT_FOUND.value, "message": "Not found"},
-            )
-
-        response_builder: ResponseBuilder = ResponseBuilder(
-            response=response,
-            serializer=self._serializer,
-            route=None,
-        )
-
-        return response_builder.build(self.current_event, self._cors)
+        pass
 
     async def asgi_handler(self, scope: dict, receive: Callable, send: Callable) -> None:
         """
@@ -362,48 +251,7 @@ class HttpResolverLocal(ApiGatewayResolver):
         send : Callable
             ASGI send function
         """
-        if scope["type"] == "lifespan":
-            # Handle lifespan events (startup/shutdown)
-            while True:
-                message = await receive()
-                if message["type"] == "lifespan.startup":
-                    await send({"type": "lifespan.startup.complete"})
-                elif message["type"] == "lifespan.shutdown":
-                    await send({"type": "lifespan.shutdown.complete"})
-                    return
-
-        if scope["type"] != "http":
-            return
-
-        # Read request body
-        body = b""
-        while True:
-            message = await receive()
-            body += message.get("body", b"")
-            if not message.get("more_body", False):
-                break
-
-        # Convert ASGI scope to HttpProxyEvent
-        event = HttpProxyEvent.from_asgi(scope, body)
-
-        # Create mock Lambda context
-        context: Any = MockLambdaContext()
-
-        # Set up resolver state (similar to resolve())
-        BaseRouter.current_event = self._to_proxy_event(event._data)
-        BaseRouter.lambda_context = context
-
-        self._is_async_mode = True
-
-        try:
-            # Use async resolve
-            response = await self._resolve_async()
-        finally:
-            self._is_async_mode = False
-            self.clear_context()
-
-        # Send HTTP response
-        await self._send_response(send, response)
+        pass
 
     async def __call__(  # type: ignore[override]
         self,
@@ -416,42 +264,4 @@ class HttpResolverLocal(ApiGatewayResolver):
 
     async def _send_response(self, send: Callable, response: dict) -> None:
         """Send the response via ASGI."""
-        status_code = response.get("statusCode", 200)
-        headers = response.get("headers", {})
-        cookies = response.get("cookies", [])
-        body = response.get("body", "")
-        is_base64 = response.get("isBase64Encoded", False)
-
-        # Build headers list for ASGI
-        header_list: list[tuple[bytes, bytes]] = []
-        for key, value in headers.items():
-            header_list.append((key.lower().encode(), str(value).encode()))
-
-        # Add Set-Cookie headers
-        for cookie in cookies:
-            header_list.append((b"set-cookie", str(cookie).encode()))
-
-        # Send response start
-        await send(
-            {
-                "type": "http.response.start",
-                "status": status_code,
-                "headers": header_list,
-            },
-        )
-
-        # Prepare body
-        if is_base64:
-            body_bytes = base64.b64decode(body)
-        elif isinstance(body, str):
-            body_bytes = body.encode("utf-8")
-        else:  # pragma: no cover
-            body_bytes = body
-
-        # Send response body
-        await send(
-            {
-                "type": "http.response.body",
-                "body": body_bytes,
-            },
-        )
+        pass

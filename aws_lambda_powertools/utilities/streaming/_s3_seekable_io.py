@@ -76,75 +76,39 @@ class _S3SeekableIO(IO[bytes]):
         """
         Returns a boto3 S3 client
         """
-        if self._s3_client is None:
-            self._s3_client = boto3.client("s3")
-        if not self._has_user_agent:
-            user_agent.register_feature_to_client(client=self._s3_client, feature="streaming")
-            self._has_user_agent = True
-        return self._s3_client
+        pass
 
     @property
     def size(self) -> int:
         """
         Retrieves the size of the S3 object
         """
-        if self._size is None:
-            logger.debug("Getting size of S3 object")
-            self._size = self.s3_client.head_object(**self._sdk_options).get("ContentLength", 0)
-        return self._size
+        pass
 
     @property
     def raw_stream(self) -> PowertoolsStreamingBody:
         """
         Returns the boto3 StreamingBody, starting the stream from the sought position.
         """
-        if self._raw_stream is None:
-            range_header = f"bytes={self._position}-"
-            logger.debug(f"Starting new stream at {range_header}")
-            self._raw_stream = self.s3_client.get_object(Range=range_header, **self._sdk_options).get("Body")
-            self._closed = False
-
-        return self._raw_stream
+        pass
 
     def seek(self, offset: int, whence: int = io.SEEK_SET) -> int:
         """
         Seeks the current object, invalidating the underlying stream if the position changes.
         """
-        current_position = self._position
-
-        if whence == io.SEEK_SET:
-            self._position = offset
-        elif whence == io.SEEK_CUR:
-            self._position += offset
-        elif whence == io.SEEK_END:
-            self._position = self.size + offset
-        else:
-            raise ValueError(f"invalid whence ({whence}, should be {io.SEEK_SET}, {io.SEEK_CUR}, {io.SEEK_END})")
-
-        # Invalidate the existing stream, so a new one will be open on the next IO operation.
-        #
-        # Some consumers of this class might call seek multiple times, without affecting the net position.
-        # zipfile.ZipFile does this often. If we just blindly invalidated the stream, we would have to re-open
-        # an S3 HTTP connection just to continue reading on the same position as before, which would be inefficient.
-        #
-        # So we only invalidate it if there's a net position change after seeking, and we have an existing S3 connection
-        if current_position != self._position and self._raw_stream is not None:
-            self._raw_stream.close()
-            self._raw_stream = None
-
-        return self._position
+        pass
 
     def seekable(self) -> bool:
-        return True
+        pass
 
     def readable(self) -> bool:
-        return True
+        pass
 
     def writable(self) -> bool:
-        return False
+        pass
 
     def tell(self) -> int:
-        return self._position
+        pass
 
     def read(self, size: int | None = -1) -> bytes:
         size = None if size == -1 else size
@@ -160,13 +124,11 @@ class _S3SeekableIO(IO[bytes]):
 
     def readlines(self, hint: int = -1) -> list[bytes]:
         # boto3's StreamingResponse doesn't implement the "hint" parameter
-        data = self.raw_stream.readlines()
-        self._position += sum(len(line) for line in data)
-        return data
+        pass
 
     @property
     def closed(self) -> bool:
-        return self._closed
+        pass
 
     def __next__(self):
         return self.raw_stream.__next__()
@@ -181,8 +143,7 @@ class _S3SeekableIO(IO[bytes]):
         self.close()
 
     def close(self) -> None:
-        self.raw_stream.close()
-        self._closed = True
+        pass
 
     def fileno(self) -> int:
         raise NotImplementedError("this stream is not backed by a file descriptor")
@@ -191,7 +152,7 @@ class _S3SeekableIO(IO[bytes]):
         raise NotImplementedError(MESSAGE_STREAM_NOT_WRITABLE)
 
     def isatty(self) -> bool:
-        return False
+        pass
 
     def truncate(self, size: int | None = 0) -> int:
         raise NotImplementedError(MESSAGE_STREAM_NOT_WRITABLE)

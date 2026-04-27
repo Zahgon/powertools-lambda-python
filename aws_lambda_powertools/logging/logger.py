@@ -521,49 +521,7 @@ class Logger:
 
         @functools.wraps(lambda_handler)
         def decorate(event, context, *args, **kwargs):
-            unwrapped_context = (
-                build_lambda_context_model(context.lambda_context)
-                if is_durable_context(context)
-                else build_lambda_context_model(context)
-            )
-
-            cold_start = _is_cold_start()
-
-            if clear_state:
-                self.structure_logs(cold_start=cold_start, **unwrapped_context.__dict__)
-            else:
-                self.append_keys(cold_start=cold_start, **unwrapped_context.__dict__)
-
-            if correlation_id_path:
-                self.set_correlation_id(
-                    jmespath_utils.query(envelope=correlation_id_path, data=event),
-                )
-
-            if log_event:
-                logger.debug("Event received")
-                self.info(extract_event_from_common_models(event))
-
-            # Sampling rate is defined, and this is not ColdStart
-            # then we need to recalculate the sampling
-            # See: https://github.com/aws-powertools/powertools-lambda-python/issues/6141
-            if self.sampling_rate and not cold_start:
-                self.refresh_sample_rate_calculation()
-
-            try:
-                # Execute the Lambda handler with provided event and context
-                return lambda_handler(event, context, *args, **kwargs)
-            except:
-                # Flush the log buffer if configured to do so on uncaught errors
-                # Ensures logging state is cleaned up even if an exception is raised
-                if flush_buffer_on_uncaught_error:
-                    logger.debug("Uncaught error detected, flushing log buffer before exit")
-                    self.flush_buffer()
-                # Re-raise any exceptions that occur during handler execution
-                raise
-            finally:
-                # Clear the cache after invocation is complete
-                if self._buffer_config:
-                    self._buffer_cache.clear()
+            pass
 
         return decorate
 
@@ -758,25 +716,7 @@ class Logger:
         extra: Mapping[str, object] | None = None,
         **kwargs: object,
     ) -> None:
-        extra = extra or {}
-        extra = {**extra, **kwargs}
-
-        # Workflow: Error Logging with automatic buffer flushing
-        # 1. Buffer configuration checked for immediate flush
-        # 2. If auto-flush enabled, trigger complete buffer processing
-        # 3. Critical log is not "bufferable", so ensure error log is immediately available
-
-        if self._buffer_config and self._buffer_config.flush_on_error_log:
-            self.flush_buffer()
-
-        return self._logger.critical(
-            msg,
-            *args,
-            exc_info=exc_info,
-            stack_info=stack_info,
-            stacklevel=stacklevel,
-            extra=extra,
-        )
+        pass
 
     def exception(
         self,
@@ -811,10 +751,10 @@ class Logger:
         self.registered_formatter.append_keys(**additional_keys)
 
     def get_current_keys(self) -> dict[str, Any]:
-        return self.registered_formatter.get_current_keys()
+        pass
 
     def remove_keys(self, keys: Iterable[str]) -> None:
-        self.registered_formatter.remove_keys(keys)
+        pass
 
     @contextmanager
     def append_context_keys(self, **additional_keys: Any) -> Generator[None, None, None]:
@@ -841,8 +781,7 @@ class Logger:
                 logger.info("Log with context")
             logger.info("Log without context")
         """
-        with self.registered_formatter.append_context_keys(**additional_keys):
-            yield
+        pass
 
     def clear_state(self) -> None:
         """Removes all custom keys that were appended to the Logger."""
@@ -856,15 +795,15 @@ class Logger:
     # They prevent race conditions and ensure data consistency across multiple threads.
     def thread_safe_append_keys(self, **additional_keys: object) -> None:
         # Append additional key-value pairs to the context safely in a thread-safe manner.
-        self.registered_formatter.thread_safe_append_keys(**additional_keys)
+        pass
 
     def thread_safe_get_current_keys(self) -> dict[str, Any]:
         # Retrieve the current context keys safely in a thread-safe manner.
-        return self.registered_formatter.thread_safe_get_current_keys()
+        pass
 
     def thread_safe_remove_keys(self, keys: Iterable[str]) -> None:
         # Remove specified keys from the context safely in a thread-safe manner.
-        self.registered_formatter.thread_safe_remove_keys(keys)
+        pass
 
     def thread_safe_clear_keys(self) -> None:
         # Clear all keys from the context safely in a thread-safe manner.
@@ -935,9 +874,7 @@ class Logger:
         str, optional
             Value for the correlation id
         """
-        if isinstance(self.registered_formatter, LambdaPowertoolsFormatter):
-            return self.registered_formatter.log_format.get("correlation_id")
-        return None
+        pass
 
     def setLevel(self, level: str | int | None) -> None:
         return self._logger.setLevel(self._determine_log_level(level))
@@ -949,35 +886,25 @@ class Logger:
         return self._logger.addFilter(filter)
 
     def removeFilter(self, filter: logging._FilterType) -> None:  # noqa: A002 # filter built-in usage
-        return self._logger.removeFilter(filter)
+        pass
 
     @property
     def registered_handler(self) -> logging.Handler:
         """Convenience property to access the first logger handler"""
-        # We ignore mypy here because self.child encodes whether or not self._logger.parent is
-        # None, mypy can't see this from context but we can
-        return self._get_handler()
+        pass
 
     @property
     def registered_formatter(self) -> BasePowertoolsFormatter:
         """Convenience property to access the first logger formatter"""
-        handler = self.registered_handler
-        if handler is None:
-            raise OrphanedChildLoggerError(
-                "Orphan child loggers cannot append nor remove keys until a parent is initialized first. "
-                "To solve this issue, you can A) make sure a parent logger is initialized first, or B) move append/remove keys operations to a later stage."  # noqa: E501
-                "Reference: https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#reusing-logger-across-your-code",
-            )
-
-        return cast(BasePowertoolsFormatter, handler.formatter)
+        pass
 
     @property
     def log_level(self) -> int:
-        return self._logger.level
+        pass
 
     @property
     def name(self) -> str:
-        return self._logger.name
+        pass
 
     @property
     def handlers(self) -> list[logging.Handler]:
@@ -988,7 +915,7 @@ class Logger:
 
         Looking for the first configured handler? Use registered_handler property instead.
         """
-        return self._logger.handlers
+        pass
 
     def _get_aws_lambda_log_level(self) -> str | None:
         """
@@ -1263,8 +1190,7 @@ class Logger:
         -------
         None
         """
-        if self._buffer_config:
-            self._buffer_cache.clear()
+        pass
 
 
 def set_package_logger(
@@ -1308,7 +1234,7 @@ def set_package_logger(
 
 def log_uncaught_exception_hook(exc_type, exc_value, exc_traceback, logger: Logger) -> None:
     """Callback function for sys.excepthook to use Logger to log uncaught exceptions"""
-    logger.exception(exc_value, exc_info=(exc_type, exc_value, exc_traceback))  # pragma: no cover
+    pass
 
 
 def _get_caller_filename() -> str:

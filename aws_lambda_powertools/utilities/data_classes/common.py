@@ -31,13 +31,7 @@ from aws_lambda_powertools.utilities.data_classes.shared_functions import (
 
 def _parse_cookie_string(cookie_string: str) -> dict[str, str]:
     """Parse a cookie string (``key=value; key2=value2``) into a dict."""
-    cookies: dict[str, str] = {}
-    for segment in cookie_string.split(";"):
-        stripped = segment.strip()
-        if "=" in stripped:
-            name, _, value = stripped.partition("=")
-            cookies[name.strip()] = value.strip()
-    return cookies
+    pass
 
 
 class CaseInsensitiveDict(dict):
@@ -133,35 +127,10 @@ class DictWrapper(Mapping):
         This should be used in case where secrets, such as access keys, are
         stored in the Data Class but should not be logged out.
         """
-        properties = self._properties()
-        sensitive_properties = ["raw_event"]
-        if hasattr(self, "_sensitive_properties"):
-            sensitive_properties.extend(self._sensitive_properties)  # pyright: ignore  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
-
-        result: dict[str, Any] = {}
-        for property_key in properties:
-            if property_key in sensitive_properties:
-                result[property_key] = "[SENSITIVE]"
-            else:
-                try:
-                    property_value = getattr(self, property_key)
-                    result[property_key] = property_value
-
-                    # Checks whether the class is a subclass of the parent class to perform a recursive operation.
-                    if issubclass(property_value.__class__, DictWrapper):
-                        result[property_key] = property_value._str_helper()
-                    # Checks if the key is a list and if it is a subclass of the parent class
-                    elif isinstance(property_value, list):
-                        for seq, item in enumerate(property_value):
-                            if issubclass(item.__class__, DictWrapper) and isinstance(item, DictWrapper):
-                                result[property_key][seq] = item._str_helper()
-                except Exception:
-                    result[property_key] = "[Cannot be deserialized]"
-
-        return result
+        pass
 
     def _properties(self) -> list[str]:
-        return [p for p in dir(self.__class__) if isinstance(getattr(self.__class__, p), property)]
+        pass
 
     def get(self, key: str, default: Any | None = None) -> Any | None:
         return self._data.get(key, default)
@@ -169,7 +138,7 @@ class DictWrapper(Mapping):
     @property
     def raw_event(self) -> dict[str, Any]:
         """The original raw event dict"""
-        return self._data
+        pass
 
     def __hash__(self):
         return hash(self._data)
@@ -178,15 +147,15 @@ class DictWrapper(Mapping):
 class BaseProxyEvent(DictWrapper):
     @property
     def headers(self) -> dict[str, str]:
-        return CaseInsensitiveDict(self.get("headers"))
+        pass
 
     @property
     def query_string_parameters(self) -> dict[str, str]:
-        return self.get("queryStringParameters") or {}
+        pass
 
     @property
     def multi_value_query_string_parameters(self) -> dict[str, list[str]]:
-        return self.get("multiValueQueryStringParameters") or {}
+        pass
 
     @property
     def resolved_query_string_parameters(self) -> dict[str, list[str]]:
@@ -197,7 +166,7 @@ class BaseProxyEvent(DictWrapper):
         This is necessary because different resolvers use different formats to encode
         multi query string parameters.
         """
-        return {k: v.split(",") for k, v in self.query_string_parameters.items()}
+        pass
 
     @property
     def resolved_headers_field(self) -> dict[str, str]:
@@ -212,7 +181,7 @@ class BaseProxyEvent(DictWrapper):
         This ensures that customers can access headers with any casing, as per the RFC guidelines.
         Reference: https://www.rfc-editor.org/rfc/rfc7540#section-8.1.2
         """
-        return self.headers
+        pass
 
     @property
     def resolved_cookies_field(self) -> dict[str, str]:
@@ -226,56 +195,35 @@ class BaseProxyEvent(DictWrapper):
         Subclasses may override this for event formats that provide cookies
         in a dedicated field (e.g., API Gateway HTTP API v2).
         """
-        # Primary: self.headers is CaseInsensitiveDict — case-insensitive lookup
-        cookie_value: str | list[str] = self.headers.get("cookie") or ""
-
-        # Fallback: resolved_headers_field covers ALB/REST v1 multi-value headers
-        # where the event may not have a single-value 'headers' dict at all
-        if not cookie_value:
-            headers = self.resolved_headers_field or {}
-            cookie_value = headers.get("cookie") or headers.get("Cookie") or ""
-
-        # Multi-value headers (ALB, REST v1) may return a list
-        if isinstance(cookie_value, list):
-            cookie_value = "; ".join(cookie_value)
-
-        if not cookie_value:
-            return {}
-
-        return _parse_cookie_string(cookie_value)
+        pass
 
     @property
     def is_base64_encoded(self) -> bool | None:
-        return self.get("isBase64Encoded")
+        pass
 
     @property
     def body(self) -> str | None:
         """Submitted body of the request as a string"""
-        return self.get("body")
+        pass
 
     @cached_property
     def json_body(self) -> Any:
         """Parses the submitted body as json"""
-        if self.decoded_body:
-            return self._json_deserializer(self.decoded_body)
-        return None
+        pass
 
     @cached_property
     def decoded_body(self) -> str | None:
         """Decode the body from base64 if encoded, otherwise return it as is."""
-        body: str | None = self.body
-        if self.is_base64_encoded and body:
-            return base64.b64decode(body.encode()).decode()
-        return body
+        pass
 
     @property
     def path(self) -> str:
-        return self["path"]
+        pass
 
     @property
     def http_method(self) -> str:
         """The HTTP method used. Valid values include: DELETE, GET, HEAD, OPTIONS, PATCH, POST, and PUT."""
-        return self["httpMethod"]
+        pass
 
     @overload
     def get_query_string_value(self, name: str, default_value: str) -> str: ...
@@ -319,11 +267,7 @@ class BaseProxyEvent(DictWrapper):
         List[str], optional
             List of query string values
         """
-        return get_multi_value_query_string_values(
-            multi_value_query_string_parameters=self.multi_value_query_string_parameters,
-            name=name,
-            default_values=default_values,
-        )
+        pass
 
     @overload
     def get_header_value(
@@ -365,19 +309,7 @@ class BaseProxyEvent(DictWrapper):
         str, optional
             Header value
         """
-        warnings.warn(
-            "The `get_header_value` function is deprecated in V3 and the `case_sensitive` parameter "
-            "no longer has any effect. This function will be removed in the next major version. "
-            "Instead, access headers directly using event.headers.get('HeaderName'), which is case insensitive.",
-            category=PowertoolsDeprecationWarning,
-            stacklevel=2,
-        )
-        return get_header_value(  # ty: ignore[deprecated]
-            headers=self.headers,
-            name=name,
-            default_value=default_value,
-            case_sensitive=case_sensitive,
-        )
+        pass
 
     def header_serializer(self) -> BaseHeadersSerializer:
         raise NotImplementedError()
@@ -387,255 +319,254 @@ class RequestContextClientCert(DictWrapper):
     @property
     def client_cert_pem(self) -> str:
         """Client certificate pem"""
-        return self["clientCertPem"]
+        pass
 
     @property
     def issuer_dn(self) -> str:
         """Issuer Distinguished Name"""
-        return self["issuerDN"]
+        pass
 
     @property
     def serial_number(self) -> str:
         """Unique serial number for client cert"""
-        return self["serialNumber"]
+        pass
 
     @property
     def subject_dn(self) -> str:
         """Subject Distinguished Name"""
-        return self["subjectDN"]
+        pass
 
     @property
     def validity_not_after(self) -> str:
         """Date when the cert is no longer valid
 
         eg: Aug  5 00:28:21 2120 GMT"""
-        return self["validity"]["notAfter"]
+        pass
 
     @property
     def validity_not_before(self) -> str:
         """Cert is not valid before this date
 
         eg: Aug 29 00:28:21 2020 GMT"""
-        return self["validity"]["notBefore"]
+        pass
 
 
 class APIGatewayEventIdentity(DictWrapper):
     @property
     def access_key(self) -> str | None:
-        return self.get("accessKey")
+        pass
 
     @property
     def account_id(self) -> str | None:
         """The AWS account ID associated with the request."""
-        return self.get("accountId")
+        pass
 
     @property
     def api_key(self) -> str | None:
         """For API methods that require an API key, this variable is the API key associated with the method request.
         For methods that don't require an API key, this variable is null."""
-        return self.get("apiKey")
+        pass
 
     @property
     def api_key_id(self) -> str | None:
         """The API key ID associated with an API request that requires an API key."""
-        return self.get("apiKeyId")
+        pass
 
     @property
     def caller(self) -> str | None:
         """The principal identifier of the caller making the request."""
-        return self.get("caller")
+        pass
 
     @property
     def cognito_authentication_provider(self) -> str | None:
         """A comma-separated list of the Amazon Cognito authentication providers used by the caller
         making the request. Available only if the request was signed with Amazon Cognito credentials."""
-        return self.get("cognitoAuthenticationProvider")
+        pass
 
     @property
     def cognito_authentication_type(self) -> str | None:
         """The Amazon Cognito authentication type of the caller making the request.
         Available only if the request was signed with Amazon Cognito credentials."""
-        return self.get("cognitoAuthenticationType")
+        pass
 
     @property
     def cognito_identity_id(self) -> str | None:
         """The Amazon Cognito identity ID of the caller making the request.
         Available only if the request was signed with Amazon Cognito credentials."""
-        return self.get("cognitoIdentityId")
+        pass
 
     @property
     def cognito_identity_pool_id(self) -> str | None:
         """The Amazon Cognito identity pool ID of the caller making the request.
         Available only if the request was signed with Amazon Cognito credentials."""
-        return self.get("cognitoIdentityPoolId")
+        pass
 
     @property
     def principal_org_id(self) -> str | None:
         """The AWS organization ID."""
-        return self.get("principalOrgId")
+        pass
 
     @property
     def source_ip(self) -> str:
         """The source IP address of the TCP connection making the request to API Gateway."""
-        return self["sourceIp"]
+        pass
 
     @property
     def user(self) -> str | None:
         """The principal identifier of the user making the request."""
-        return self.get("user")
+        pass
 
     @property
     def user_agent(self) -> str | None:
         """The User Agent of the API caller."""
-        return self.get("userAgent")
+        pass
 
     @property
     def user_arn(self) -> str | None:
         """The Amazon Resource Name (ARN) of the effective user identified after authentication."""
-        return self.get("userArn")
+        pass
 
     @property
     def client_cert(self) -> RequestContextClientCert | None:
-        client_cert = self.get("clientCert")
-        return None if client_cert is None else RequestContextClientCert(client_cert)
+        pass
 
 
 class BaseRequestContext(DictWrapper):
     @property
     def account_id(self) -> str:
         """The AWS account ID associated with the request."""
-        return self["accountId"]
+        pass
 
     @property
     def api_id(self) -> str:
         """The identifier API Gateway assigns to your API."""
-        return self["apiId"]
+        pass
 
     @property
     def domain_name(self) -> str | None:
         """A domain name"""
-        return self.get("domainName")
+        pass
 
     @property
     def domain_prefix(self) -> str | None:
-        return self.get("domainPrefix")
+        pass
 
     @property
     def extended_request_id(self) -> str | None:
         """An automatically generated ID for the API call, which contains more useful information
         for debugging/troubleshooting."""
-        return self.get("extendedRequestId")
+        pass
 
     @property
     def protocol(self) -> str:
         """The request protocol, for example, HTTP/1.1."""
-        return self["protocol"]
+        pass
 
     @property
     def http_method(self) -> str:
         """The HTTP method used. Valid values include: DELETE, GET, HEAD, OPTIONS, PATCH, POST, and PUT."""
-        return self["httpMethod"]
+        pass
 
     @property
     def identity(self) -> APIGatewayEventIdentity:
-        return APIGatewayEventIdentity(self["identity"])
+        pass
 
     @property
     def path(self) -> str:
-        return self["path"]
+        pass
 
     @property
     def stage(self) -> str:
         """The deployment stage of the API request"""
-        return self["stage"]
+        pass
 
     @property
     def request_id(self) -> str:
         """The ID that API Gateway assigns to the API request."""
-        return self["requestId"]
+        pass
 
     @property
     def request_time(self) -> str | None:
         """The CLF-formatted request time (dd/MMM/yyyy:HH:mm:ss +-hhmm)"""
-        return self.get("requestTime")
+        pass
 
     @property
     def request_time_epoch(self) -> int:
         """The Epoch-formatted request time."""
-        return self["requestTimeEpoch"]
+        pass
 
     @property
     def resource_id(self) -> str:
-        return self["resourceId"]
+        pass
 
     @property
     def resource_path(self) -> str:
-        return self["resourcePath"]
+        pass
 
 
 class RequestContextV2Http(DictWrapper):
     @property
     def method(self) -> str:
-        return self["method"]
+        pass
 
     @property
     def path(self) -> str:
-        return self["path"]
+        pass
 
     @property
     def protocol(self) -> str:
         """The request protocol, for example, HTTP/1.1."""
-        return self["protocol"]
+        pass
 
     @property
     def source_ip(self) -> str:
         """The source IP address of the TCP connection making the request to API Gateway."""
-        return self["sourceIp"]
+        pass
 
     @property
     def user_agent(self) -> str:
         """The User Agent of the API caller."""
-        return self["userAgent"]
+        pass
 
 
 class BaseRequestContextV2(DictWrapper):
     @property
     def account_id(self) -> str:
         """The AWS account ID associated with the request."""
-        return self["accountId"]
+        pass
 
     @property
     def api_id(self) -> str:
         """The identifier API Gateway assigns to your API."""
-        return self["apiId"]
+        pass
 
     @property
     def domain_name(self) -> str:
         """A domain name"""
-        return self["domainName"]
+        pass
 
     @property
     def domain_prefix(self) -> str:
-        return self["domainPrefix"]
+        pass
 
     @property
     def http(self) -> RequestContextV2Http:
-        return RequestContextV2Http(self["http"])
+        pass
 
     @property
     def request_id(self) -> str:
         """The ID that API Gateway assigns to the API request."""
-        return self["requestId"]
+        pass
 
     @property
     def route_key(self) -> str:
         """The selected route key."""
-        return self["routeKey"]
+        pass
 
     @property
     def stage(self) -> str:
         """The deployment stage of the API request"""
-        return self["stage"]
+        pass
 
     @property
     def time(self) -> str:
@@ -645,12 +576,9 @@ class BaseRequestContextV2(DictWrapper):
     @property
     def time_epoch(self) -> int:
         """The Epoch-formatted request time."""
-        return self["timeEpoch"]
+        pass
 
     @property
     def authentication(self) -> RequestContextClientCert | None:
         """Optional when using mutual TLS authentication"""
-        # FunctionURL might have NONE as AuthZ
-        authentication = self.get("authentication") or {}
-        client_cert = authentication.get("clientCert")
-        return None if client_cert is None else RequestContextClientCert(client_cert)
+        pass

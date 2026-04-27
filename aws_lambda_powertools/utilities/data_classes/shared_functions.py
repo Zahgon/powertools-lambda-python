@@ -23,7 +23,7 @@ def base64_decode(value: str) -> str:
     str
         The decoded string value.
     """
-    return base64.b64decode(value).decode("UTF-8")
+    pass
 
 
 @overload
@@ -71,29 +71,7 @@ def get_header_value(
     str, optional
         The value of the header if found, otherwise the default value or None.
     """
-
-    warnings.warn(
-        "The `get_header_value` function is deprecated in V3 and the `case_sensitive` parameter "
-        "no longer has any effect. This function will be removed in the next major version. "
-        "Instead, access headers directly using event.headers.get('HeaderName'), which is case insensitive.",
-        category=PowertoolsDeprecationWarning,
-        stacklevel=2,
-    )
-
-    # If headers is NoneType, return default value
-    if not headers:
-        return default_value
-
-    if case_sensitive:
-        return headers.get(name, default_value)
-    name_lower = name.lower()
-
-    return next(
-        # Iterate over the dict and do a case-insensitive key comparison
-        (value for key, value in headers.items() if key.lower() == name_lower),
-        # Default value is returned if no matches was found
-        default_value,
-    )
+    pass
 
 
 @overload
@@ -152,8 +130,4 @@ def get_multi_value_query_string_values(
     List[str]. optional
         The values of the query string parameter if found, or the default values if not found.
     """
-
-    default = default_values or []
-    params = multi_value_query_string_parameters or {}
-
-    return params.get(name) or default
+    pass

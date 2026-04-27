@@ -109,7 +109,7 @@ class Router(BaseRouter):
         >>>         results.append({"processed": True, "id": item.get("id")})
         >>>     return results
         """
-        return self._publish_registry.register(path=path, aggregate=aggregate)
+        pass
 
     def async_on_publish(
         self,
@@ -150,7 +150,7 @@ class Router(BaseRouter):
         >>>     results = await asyncio.gather(*tasks)
         >>>     return [{"saved": True, "id": r.id} for r in results]
         """
-        return self._async_publish_registry.register(path=path, aggregate=aggregate)
+        pass
 
     def on_subscribe(
         self,
@@ -188,7 +188,7 @@ class Router(BaseRouter):
         >>>         "roomId": room_id
         >>>     }
         """
-        return self._subscribe_registry.register(path=path)
+        pass
 
     def append_context(self, **additional_context):
         """Append key=value data as routing context"""

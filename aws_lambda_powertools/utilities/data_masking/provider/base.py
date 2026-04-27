@@ -82,38 +82,7 @@ class BaseProvider:
         masking_rules: dict | None = None,
         **kwargs,
     ) -> Any:
-        result: Any = DATA_MASKING_STRING
-
-        if not any([dynamic_mask, custom_mask, regex_pattern, mask_format, masking_rules]):
-            if isinstance(data, (str, int, float, dict, bytes)):
-                return DATA_MASKING_STRING
-            elif isinstance(data, (list, tuple, set)):
-                return type(data)([DATA_MASKING_STRING] * len(data))
-            else:
-                return DATA_MASKING_STRING
-
-        if isinstance(data, (str, int, float)):
-            result = self._mask_primitive(str(data), dynamic_mask, custom_mask, regex_pattern, mask_format)
-        elif isinstance(data, dict):
-            result = self._mask_dict(
-                data,
-                dynamic_mask,
-                custom_mask,
-                regex_pattern,
-                mask_format,
-                masking_rules,
-            )
-        elif isinstance(data, (list, tuple, set)):
-            result = self._mask_iterable(
-                data,
-                dynamic_mask,
-                custom_mask,
-                regex_pattern,
-                mask_format,
-                masking_rules,
-            )
-
-        return result
+        pass
 
     def _mask_primitive(
         self,
@@ -123,12 +92,7 @@ class BaseProvider:
         regex_pattern: str | None,
         mask_format: str | None,
     ) -> str:
-        if regex_pattern and mask_format:
-            return self._regex_mask(data, regex_pattern, mask_format)
-        elif custom_mask:
-            return self._pattern_mask(data, custom_mask)
-
-        return self._custom_erase(data)
+        pass
 
     def _mask_dict(
         self,
@@ -139,17 +103,7 @@ class BaseProvider:
         mask_format: str | None,
         masking_rules: dict | None,
     ) -> dict:
-        return {
-            k: self.erase(
-                v,
-                dynamic_mask=dynamic_mask,
-                custom_mask=custom_mask,
-                regex_pattern=regex_pattern,
-                mask_format=mask_format,
-                masking_rules=masking_rules,
-            )
-            for k, v in data.items()
-        }
+        pass
 
     def _mask_iterable(
         self,
@@ -160,34 +114,15 @@ class BaseProvider:
         mask_format: str | None,
         masking_rules: dict | None,
     ) -> list | tuple | set:
-        masked_data = [
-            self.erase(
-                item,
-                dynamic_mask=dynamic_mask,
-                custom_mask=custom_mask,
-                regex_pattern=regex_pattern,
-                mask_format=mask_format,
-                masking_rules=masking_rules,
-            )
-            for item in data
-        ]
-        return type(data)(masked_data)
+        pass
 
     def _pattern_mask(self, data: str, pattern: str) -> str:
         """Apply pattern masking to string data."""
-        return pattern[: len(data)] if len(pattern) >= len(data) else pattern
+        pass
 
     def _regex_mask(self, data: str, regex_pattern: str, mask_format: str) -> str:
         """Apply regex masking to string data."""
-        try:
-            if regex_pattern not in _regex_cache:
-                _regex_cache[regex_pattern] = re.compile(regex_pattern)
-            return _regex_cache[regex_pattern].sub(mask_format, data)
-        except re.error:
-            return data
+        pass
 
     def _custom_erase(self, data: str) -> str:
-        if not data:
-            return ""
-
-        return "".join("*" if char not in PRESERVE_CHARS else char for char in data)
+        pass

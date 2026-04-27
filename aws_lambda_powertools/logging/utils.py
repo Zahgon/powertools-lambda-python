@@ -40,52 +40,15 @@ def copy_config_to_registered_loggers(
     exclude : set[str] | None, optional
         List of logger names to exclude, by default None
     """
-    level = log_level or source_logger.log_level
-
-    # Assumptions: Only take parent loggers not children (dot notation rule)
-    # Steps:
-    # 1. Default operation: Include all registered loggers
-    # 2. Only include set? Only add Loggers in the list and ignore all else
-    # 3. Include and exclude set? Add Logger if it’s in include and not in exclude
-    # 4. Only exclude set? Ignore Logger in the excluding list
-
-    # Exclude source and Powertools for AWS Lambda (Python) package logger by default
-    # If source logger is a child ensure we exclude parent logger to not break child logger
-    # from receiving/pushing updates to keys being added/removed
-    source_logger_name = source_logger.name.split(".")[0]
-
-    if exclude:
-        exclude.update([source_logger_name, PACKAGE_LOGGER])
-    else:
-        exclude = {source_logger_name, PACKAGE_LOGGER}
-
-    # Prepare loggers set
-    if include:
-        loggers = include.difference(exclude)
-        filter_func = _include_registered_loggers_filter
-    else:
-        loggers = exclude
-        filter_func = _exclude_registered_loggers_filter
-
-    registered_loggers = _find_registered_loggers(loggers=loggers, filter_func=filter_func)
-    for logger in registered_loggers:
-        _configure_logger(
-            source_logger=source_logger,
-            logger=logger,
-            level=level,
-            ignore_log_level=ignore_log_level,
-            include_buffering=include_buffering,
-        )
+    pass
 
 
 def _include_registered_loggers_filter(loggers: set[str]):
-    return [logging.getLogger(name) for name in logging.root.manager.loggerDict if "." not in name and name in loggers]
+    pass
 
 
 def _exclude_registered_loggers_filter(loggers: set[str]) -> list[logging.Logger]:
-    return [
-        logging.getLogger(name) for name in logging.root.manager.loggerDict if "." not in name and name not in loggers
-    ]
+    pass
 
 
 def _find_registered_loggers(
@@ -93,9 +56,7 @@ def _find_registered_loggers(
     filter_func: Callable[[set[str]], list[logging.Logger]],
 ) -> list[logging.Logger]:
     """Filter root loggers based on provided parameters."""
-    root_loggers = filter_func(loggers)
-    LOGGER.debug(f"Filtered root loggers: {root_loggers}")
-    return root_loggers
+    pass
 
 
 def _configure_logger(
@@ -106,25 +67,4 @@ def _configure_logger(
     include_buffering: bool = False,
 ) -> None:
     # customers may not want to copy the same log level from Logger to discovered loggers
-    if not ignore_log_level:
-        logger.setLevel(level)
-        LOGGER.debug(f"Logger {logger} reconfigured to use logging level {level}")
-
-    logger.handlers = []
-    logger.propagate = False  # ensure we don't propagate logs to existing loggers, #1073
-    source_logger.append_keys(name="%(name)s")  # include logger name, see #1267
-
-    buffer_config = getattr(source_logger, "_buffer_config", None)
-    if include_buffering and buffer_config is not None:
-        buffer_handler = BufferingHandler(
-            buffer_cache=source_logger._buffer_cache,
-            buffer_config=buffer_config,
-            source_logger=source_logger,
-        )
-        logger.addHandler(buffer_handler)
-        LOGGER.debug(f"Logger {logger} configured with BufferingHandler")
-        return  # exit earlier and don't add source handlers, would cause double logging
-
-    for source_handler in source_logger.handlers:
-        logger.addHandler(source_handler)
-        LOGGER.debug(f"Logger {logger} reconfigured to use {source_handler}")
+    pass

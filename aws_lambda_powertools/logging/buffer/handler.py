@@ -56,17 +56,4 @@ class BufferingHandler(logging.Handler):
         record : logging.LogRecord
             The log record from an external logger
         """
-        level_name = logging.getLevelName(record.levelno)
-
-        # If log level exceeds buffer threshold, emit directly through source logger
-        if _check_minimum_buffer_log_level(self.buffer_config.buffer_at_verbosity, level_name):
-            self.source_logger._logger.handle(record)
-            return
-
-        self.source_logger._add_log_record_to_buffer(
-            level=record.levelno,
-            msg=record.msg,
-            args=record.args,
-            exc_info=record.exc_info,
-            stack_info=False,
-        )
+        pass

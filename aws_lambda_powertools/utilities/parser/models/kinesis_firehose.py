@@ -53,7 +53,7 @@ class KinesisFirehoseRecord(BaseModel):
 
     @field_validator("data", mode="before")
     def data_base64_decode(cls, value):
-        return base64_decode(value)
+        pass
 
 
 class KinesisFirehoseModel(BaseModel):

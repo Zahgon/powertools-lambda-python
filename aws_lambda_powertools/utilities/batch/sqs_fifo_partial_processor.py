@@ -109,10 +109,7 @@ class SqsFifoPartialProcessor(BatchProcessor):
         return super().failure_handler(record, exception)
 
     def _clean(self):
-        self._failed_group_ids.clear()
-        self._current_group_id = None
-
-        super()._clean()
+        pass
 
     async def _async_process_record(self, record: dict):
         raise NotImplementedError()

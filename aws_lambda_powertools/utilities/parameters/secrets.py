@@ -298,11 +298,7 @@ class SecretsProvider(BaseProvider):
         Raises:
             SetSecretError: If there is an error setting the secret.
         """
-        try:
-            sdk_options["Name"] = name
-            return self.client.create_secret(**sdk_options)
-        except Exception as exc:
-            raise SetSecretError(f"Error setting secret - {str(exc)}") from exc
+        pass
 
     def _update_secret(self, name: str, **sdk_options):
         """
@@ -315,8 +311,7 @@ class SecretsProvider(BaseProvider):
         **sdk_options:
             Additional options to be passed to the create_secret method.
         """
-        sdk_options["SecretId"] = name
-        return self.client.put_secret_value(**sdk_options)
+        pass
 
     def set(
         self,
@@ -391,26 +386,7 @@ class SecretsProvider(BaseProvider):
             https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/secretsmanager/client/put_secret_value.html
             https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/secretsmanager/client/create_secret.html
         """
-
-        if isinstance(value, dict):
-            value = json.dumps(value, cls=Encoder)
-
-        if isinstance(value, bytes):
-            sdk_options["SecretBinary"] = value
-        else:
-            sdk_options["SecretString"] = value
-
-        if client_request_token:
-            sdk_options["ClientRequestToken"] = client_request_token
-
-        try:
-            logger.debug(f"Attempting to update secret {name}")
-            return self._update_secret(name=name, **sdk_options)
-        except self.client.exceptions.ResourceNotFoundException:
-            logger.debug(f"Secret {name} doesn't exist, creating a new one")
-            return self._create_secret(name=name, **sdk_options)
-        except Exception as exc:
-            raise SetSecretError(f"Error setting secret - {str(exc)}") from exc
+        pass
 
 
 @overload
@@ -504,21 +480,7 @@ def get_secret(
         >>>
         >>> get_secret("my-secret", VersionId="f658cac0-98a5-41d9-b993-8a76a7799194")
     """
-
-    # If max_age is not set, resolve it from the environment variable, defaulting to DEFAULT_MAX_AGE_SECS
-    max_age = resolve_max_age(env=os.getenv(constants.PARAMETERS_MAX_AGE_ENV, DEFAULT_MAX_AGE_SECS), choice=max_age)
-
-    # Only create the provider if this function is called at least once
-    if "secrets" not in DEFAULT_PROVIDERS:
-        DEFAULT_PROVIDERS["secrets"] = SecretsProvider()
-
-    return DEFAULT_PROVIDERS["secrets"].get(
-        name,
-        max_age=max_age,
-        transform=transform,
-        force_fetch=force_fetch,
-        **sdk_options,
-    )
+    pass
 
 
 def get_secrets_by_name(
@@ -581,23 +543,7 @@ def get_secrets_by_name(
         ...     Filters=[{"Key": "primary-region", "Values": ["us-east-1"]}]
         ... )
     """
-    if not names:
-        raise GetSecretError("You must provide at least one secret name")
-
-    # If max_age is not set, resolve it from the environment variable, defaulting to DEFAULT_MAX_AGE_SECS
-    max_age = resolve_max_age(env=os.getenv(constants.PARAMETERS_MAX_AGE_ENV, DEFAULT_MAX_AGE_SECS), choice=max_age)
-
-    # Only create the provider if this function is called at least once
-    if "secrets" not in DEFAULT_PROVIDERS:
-        DEFAULT_PROVIDERS["secrets"] = SecretsProvider()
-
-    return DEFAULT_PROVIDERS["secrets"].get_multiple(
-        names=names,
-        max_age=max_age,
-        transform=transform,
-        force_fetch=force_fetch,
-        **sdk_options,
-    )
+    pass
 
 
 def set_secret(
@@ -671,14 +617,4 @@ def set_secret(
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/secretsmanager/client/put_secret_value.html
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/secretsmanager/client/create_secret.html
     """
-
-    # Only create the provider if this function is called at least once
-    if "secrets" not in DEFAULT_PROVIDERS:
-        DEFAULT_PROVIDERS["secrets"] = SecretsProvider()
-
-    return DEFAULT_PROVIDERS["secrets"].set(
-        name=name,
-        value=value,
-        client_request_token=client_request_token,
-        **sdk_options,
-    )
+    pass

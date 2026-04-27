@@ -15,29 +15,29 @@ class KafkaEventRecordSchemaMetadata(DictWrapper):
     @property
     def data_format(self) -> str | None:
         """The data format of the Kafka record."""
-        return self.get("dataFormat", None)
+        pass
 
     @property
     def schema_id(self) -> str | None:
         """The schema id of the Kafka record."""
-        return self.get("schemaId", None)
+        pass
 
 
 class KafkaEventRecordBase(DictWrapper):
     @property
     def topic(self) -> str:
         """The Kafka topic."""
-        return self["topic"]
+        pass
 
     @property
     def partition(self) -> int:
         """The Kafka record parition."""
-        return self["partition"]
+        pass
 
     @property
     def offset(self) -> int:
         """The Kafka record offset."""
-        return self["offset"]
+        pass
 
     @property
     def timestamp(self) -> int:
@@ -47,23 +47,17 @@ class KafkaEventRecordBase(DictWrapper):
     @property
     def timestamp_type(self) -> str:
         """The Kafka record timestamp type."""
-        return self["timestampType"]
+        pass
 
     @property
     def key_schema_metadata(self) -> KafkaEventRecordSchemaMetadata | None:
         """The metadata of the Key Kafka record."""
-        return (
-            None if self.get("keySchemaMetadata") is None else KafkaEventRecordSchemaMetadata(self["keySchemaMetadata"])
-        )
+        pass
 
     @property
     def value_schema_metadata(self) -> KafkaEventRecordSchemaMetadata | None:
         """The metadata of the Value Kafka record."""
-        return (
-            None
-            if self.get("valueSchemaMetadata") is None
-            else KafkaEventRecordSchemaMetadata(self["valueSchemaMetadata"])
-        )
+        pass
 
 
 class KafkaEventRecord(KafkaEventRecordBase):
@@ -76,8 +70,7 @@ class KafkaEventRecord(KafkaEventRecordBase):
         a round-robin algorithm will be used to determine
         the partition for the message.
         """
-
-        return self.get("key")
+        pass
 
     @property
     def decoded_key(self) -> bytes | None:
@@ -86,32 +79,32 @@ class KafkaEventRecord(KafkaEventRecordBase):
 
         If the key is not provided, this will return None.
         """
-        return None if self.key is None else base64.b64decode(self.key)
+        pass
 
     @property
     def value(self) -> str:
         """The raw (base64 encoded) Kafka record value."""
-        return self["value"]
+        pass
 
     @property
     def decoded_value(self) -> bytes:
         """Decodes the base64 encoded value as bytes."""
-        return base64.b64decode(self.value)
+        pass
 
     @cached_property
     def json_value(self) -> Any:
         """Decodes the text encoded data as JSON."""
-        return self._json_deserializer(self.decoded_value.decode("utf-8"))
+        pass
 
     @property
     def headers(self) -> list[dict[str, list[int]]]:
         """The raw Kafka record headers."""
-        return self["headers"]
+        pass
 
     @cached_property
     def decoded_headers(self) -> dict[str, bytes]:
         """Decodes the headers as a single dictionary."""
-        return CaseInsensitiveDict((k, decode_header_bytes(v)) for chunk in self.headers for k, v in chunk.items())
+        pass
 
 
 class KafkaEventBase(DictWrapper):
@@ -123,17 +116,17 @@ class KafkaEventBase(DictWrapper):
     @property
     def event_source_arn(self) -> str | None:
         """The AWS service ARN from which the Kafka event record originated, mandatory for AWS MSK."""
-        return self.get("eventSourceArn")
+        pass
 
     @property
     def bootstrap_servers(self) -> str:
         """The Kafka bootstrap URL."""
-        return self["bootstrapServers"]
+        pass
 
     @property
     def decoded_bootstrap_servers(self) -> list[str]:
         """The decoded Kafka bootstrap URL."""
-        return self.bootstrap_servers.split(",")
+        pass
 
 
 class KafkaEvent(KafkaEventBase):
@@ -151,9 +144,7 @@ class KafkaEvent(KafkaEventBase):
     @property
     def records(self) -> Iterator[KafkaEventRecord]:
         """The Kafka records."""
-        for chunk in self["records"].values():
-            for record in chunk:
-                yield KafkaEventRecord(data=record, json_deserializer=self._json_deserializer)
+        pass
 
     @property
     def record(self) -> KafkaEventRecord:
@@ -171,6 +162,4 @@ class KafkaEvent(KafkaEventBase):
             If there are no more records available.
 
         """
-        if self._records is None:
-            self._records = self.records
-        return next(self._records)
+        pass

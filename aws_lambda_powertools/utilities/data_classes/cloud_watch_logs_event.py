@@ -10,8 +10,7 @@ class CloudWatchLogsLogEvent(DictWrapper):
     @property
     def get_id(self) -> str:
         """The ID property is a unique identifier for every log event."""
-        # Note: this name conflicts with existing python builtins
-        return self["id"]
+        pass
 
     @property
     def timestamp(self) -> int:
@@ -21,34 +20,34 @@ class CloudWatchLogsLogEvent(DictWrapper):
     @property
     def message(self) -> str:
         """Get the `message` property"""
-        return self["message"]
+        pass
 
     @property
     def extracted_fields(self) -> dict[str, str]:
         """Get the `extractedFields` property"""
-        return self.get("extractedFields") or {}
+        pass
 
 
 class CloudWatchLogsDecodedData(DictWrapper):
     @property
     def owner(self) -> str:
         """The AWS Account ID of the originating log data."""
-        return self["owner"]
+        pass
 
     @property
     def log_group(self) -> str:
         """The log group name of the originating log data."""
-        return self["logGroup"]
+        pass
 
     @property
     def log_stream(self) -> str:
         """The log stream name of the originating log data."""
-        return self["logStream"]
+        pass
 
     @property
     def subscription_filters(self) -> list[str]:
         """The list of subscription filter names that matched with the originating log data."""
-        return self["subscriptionFilters"]
+        pass
 
     @property
     def message_type(self) -> str:
@@ -57,12 +56,12 @@ class CloudWatchLogsDecodedData(DictWrapper):
         Sometimes CloudWatch Logs may emit Kinesis records with a "CONTROL_MESSAGE" type,
         mainly for checking if the destination is reachable.
         """
-        return self["messageType"]
+        pass
 
     @property
     def policy_level(self) -> str | None:
         """The level at which the policy was enforced."""
-        return self.get("policyLevel")
+        pass
 
     @property
     def log_events(self) -> list[CloudWatchLogsLogEvent]:
@@ -70,7 +69,7 @@ class CloudWatchLogsDecodedData(DictWrapper):
 
         The ID property is a unique identifier for every log event.
         """
-        return [CloudWatchLogsLogEvent(i) for i in self["logEvents"]]
+        pass
 
 
 class CloudWatchLogsEvent(DictWrapper):
@@ -89,19 +88,13 @@ class CloudWatchLogsEvent(DictWrapper):
     @property
     def raw_logs_data(self) -> str:
         """The value of the `data` field is a Base64 encoded ZIP archive."""
-        return self["awslogs"]["data"]
+        pass
 
     @property
     def decompress_logs_data(self) -> bytes:
         """Decode and decompress log data"""
-        if self._decompressed_logs_data is None:
-            payload = base64.b64decode(self.raw_logs_data)
-            self._decompressed_logs_data = zlib.decompress(payload, zlib.MAX_WBITS | 32)
-        return self._decompressed_logs_data
+        pass
 
     def parse_logs_data(self) -> CloudWatchLogsDecodedData:
         """Decode, decompress and parse json data as CloudWatchLogsDecodedData"""
-        if self._json_logs_data is None:
-            self._json_logs_data = self._json_deserializer(self.decompress_logs_data.decode("UTF-8"))
-
-        return CloudWatchLogsDecodedData(self._json_logs_data)
+        pass

@@ -36,7 +36,7 @@ class DynamoDBStreamChangedRecordModel(BaseModel):
 
     @field_validator("Keys", "NewImage", "OldImage", mode="before")
     def deserialize_field(cls, value):
-        return {k: _DESERIALIZER.deserialize(v) for k, v in value.items()}
+        pass
 
 
 class UserIdentity(BaseModel):
